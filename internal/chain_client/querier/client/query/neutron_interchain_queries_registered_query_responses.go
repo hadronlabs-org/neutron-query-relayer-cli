@@ -258,6 +258,11 @@ func (o *NeutronInterchainQueriesRegisteredQueryDefaultBody) contextValidateDeta
 	for i := 0; i < len(o.Details); i++ {
 
 		if o.Details[i] != nil {
+
+			if swag.IsZero(o.Details[i]) { // not required
+				return nil
+			}
+
 			if err := o.Details[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("NeutronInterchainQueriesRegisteredQuery default" + "." + "details" + "." + strconv.Itoa(i))
@@ -496,6 +501,11 @@ func (o *NeutronInterchainQueriesRegisteredQueryOKBody) ContextValidate(ctx cont
 func (o *NeutronInterchainQueriesRegisteredQueryOKBody) contextValidateRegisteredQuery(ctx context.Context, formats strfmt.Registry) error {
 
 	if o.RegisteredQuery != nil {
+
+		if swag.IsZero(o.RegisteredQuery) { // not required
+			return nil
+		}
+
 		if err := o.RegisteredQuery.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("neutronInterchainQueriesRegisteredQueryOK" + "." + "registered_query")
@@ -647,6 +657,11 @@ func (o *NeutronInterchainQueriesRegisteredQueryOKBodyRegisteredQuery) contextVa
 	for i := 0; i < len(o.Keys); i++ {
 
 		if o.Keys[i] != nil {
+
+			if swag.IsZero(o.Keys[i]) { // not required
+				return nil
+			}
+
 			if err := o.Keys[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("neutronInterchainQueriesRegisteredQueryOK" + "." + "registered_query" + "." + "keys" + "." + strconv.Itoa(i))
@@ -665,6 +680,11 @@ func (o *NeutronInterchainQueriesRegisteredQueryOKBodyRegisteredQuery) contextVa
 func (o *NeutronInterchainQueriesRegisteredQueryOKBodyRegisteredQuery) contextValidateLastSubmittedResultRemoteHeight(ctx context.Context, formats strfmt.Registry) error {
 
 	if o.LastSubmittedResultRemoteHeight != nil {
+
+		if swag.IsZero(o.LastSubmittedResultRemoteHeight) { // not required
+			return nil
+		}
+
 		if err := o.LastSubmittedResultRemoteHeight.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("neutronInterchainQueriesRegisteredQueryOK" + "." + "registered_query" + "." + "last_submitted_result_remote_height")

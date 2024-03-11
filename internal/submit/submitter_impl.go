@@ -34,6 +34,7 @@ func (si *SubmitterImpl) SubmitKVProof(
 
 	msgs = append([]sdk.Msg{updateClientMsg}, msgs...)
 	_, err = si.sender.Send(ctx, msgs)
+
 	return err
 }
 

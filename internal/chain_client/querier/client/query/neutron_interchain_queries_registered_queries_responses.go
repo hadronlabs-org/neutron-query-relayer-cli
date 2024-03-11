@@ -258,6 +258,11 @@ func (o *NeutronInterchainQueriesRegisteredQueriesDefaultBody) contextValidateDe
 	for i := 0; i < len(o.Details); i++ {
 
 		if o.Details[i] != nil {
+
+			if swag.IsZero(o.Details[i]) { // not required
+				return nil
+			}
+
 			if err := o.Details[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("NeutronInterchainQueriesRegisteredQueries default" + "." + "details" + "." + strconv.Itoa(i))
@@ -533,6 +538,11 @@ func (o *NeutronInterchainQueriesRegisteredQueriesOKBody) ContextValidate(ctx co
 func (o *NeutronInterchainQueriesRegisteredQueriesOKBody) contextValidatePagination(ctx context.Context, formats strfmt.Registry) error {
 
 	if o.Pagination != nil {
+
+		if swag.IsZero(o.Pagination) { // not required
+			return nil
+		}
+
 		if err := o.Pagination.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("neutronInterchainQueriesRegisteredQueriesOK" + "." + "pagination")
@@ -551,6 +561,11 @@ func (o *NeutronInterchainQueriesRegisteredQueriesOKBody) contextValidateRegiste
 	for i := 0; i < len(o.RegisteredQueries); i++ {
 
 		if o.RegisteredQueries[i] != nil {
+
+			if swag.IsZero(o.RegisteredQueries[i]) { // not required
+				return nil
+			}
+
 			if err := o.RegisteredQueries[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("neutronInterchainQueriesRegisteredQueriesOK" + "." + "registered_queries" + "." + strconv.Itoa(i))
@@ -748,6 +763,11 @@ func (o *NeutronInterchainQueriesRegisteredQueriesOKBodyRegisteredQueriesItems0)
 	for i := 0; i < len(o.Keys); i++ {
 
 		if o.Keys[i] != nil {
+
+			if swag.IsZero(o.Keys[i]) { // not required
+				return nil
+			}
+
 			if err := o.Keys[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("keys" + "." + strconv.Itoa(i))
@@ -766,6 +786,11 @@ func (o *NeutronInterchainQueriesRegisteredQueriesOKBodyRegisteredQueriesItems0)
 func (o *NeutronInterchainQueriesRegisteredQueriesOKBodyRegisteredQueriesItems0) contextValidateLastSubmittedResultRemoteHeight(ctx context.Context, formats strfmt.Registry) error {
 
 	if o.LastSubmittedResultRemoteHeight != nil {
+
+		if swag.IsZero(o.LastSubmittedResultRemoteHeight) { // not required
+			return nil
+		}
+
 		if err := o.LastSubmittedResultRemoteHeight.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("last_submitted_result_remote_height")

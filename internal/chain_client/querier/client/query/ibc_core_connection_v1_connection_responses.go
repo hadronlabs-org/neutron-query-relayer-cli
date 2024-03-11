@@ -260,6 +260,11 @@ func (o *IbcCoreConnectionV1ConnectionDefaultBody) contextValidateDetails(ctx co
 	for i := 0; i < len(o.Details); i++ {
 
 		if o.Details[i] != nil {
+
+			if swag.IsZero(o.Details[i]) { // not required
+				return nil
+			}
+
 			if err := o.Details[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("IbcCoreConnectionV1Connection default" + "." + "details" + "." + strconv.Itoa(i))
@@ -534,6 +539,11 @@ func (o *IbcCoreConnectionV1ConnectionOKBody) ContextValidate(ctx context.Contex
 func (o *IbcCoreConnectionV1ConnectionOKBody) contextValidateConnection(ctx context.Context, formats strfmt.Registry) error {
 
 	if o.Connection != nil {
+
+		if swag.IsZero(o.Connection) { // not required
+			return nil
+		}
+
 		if err := o.Connection.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("ibcCoreConnectionV1ConnectionOK" + "." + "connection")
@@ -550,6 +560,11 @@ func (o *IbcCoreConnectionV1ConnectionOKBody) contextValidateConnection(ctx cont
 func (o *IbcCoreConnectionV1ConnectionOKBody) contextValidateProofHeight(ctx context.Context, formats strfmt.Registry) error {
 
 	if o.ProofHeight != nil {
+
+		if swag.IsZero(o.ProofHeight) { // not required
+			return nil
+		}
+
 		if err := o.ProofHeight.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("ibcCoreConnectionV1ConnectionOK" + "." + "proof_height")
@@ -748,6 +763,11 @@ func (o *IbcCoreConnectionV1ConnectionOKBodyConnection) ContextValidate(ctx cont
 func (o *IbcCoreConnectionV1ConnectionOKBodyConnection) contextValidateCounterparty(ctx context.Context, formats strfmt.Registry) error {
 
 	if o.Counterparty != nil {
+
+		if swag.IsZero(o.Counterparty) { // not required
+			return nil
+		}
+
 		if err := o.Counterparty.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("ibcCoreConnectionV1ConnectionOK" + "." + "connection" + "." + "counterparty")
@@ -766,6 +786,11 @@ func (o *IbcCoreConnectionV1ConnectionOKBodyConnection) contextValidateVersions(
 	for i := 0; i < len(o.Versions); i++ {
 
 		if o.Versions[i] != nil {
+
+			if swag.IsZero(o.Versions[i]) { // not required
+				return nil
+			}
+
 			if err := o.Versions[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("ibcCoreConnectionV1ConnectionOK" + "." + "connection" + "." + "versions" + "." + strconv.Itoa(i))
@@ -867,6 +892,11 @@ func (o *IbcCoreConnectionV1ConnectionOKBodyConnectionCounterparty) ContextValid
 func (o *IbcCoreConnectionV1ConnectionOKBodyConnectionCounterparty) contextValidatePrefix(ctx context.Context, formats strfmt.Registry) error {
 
 	if o.Prefix != nil {
+
+		if swag.IsZero(o.Prefix) { // not required
+			return nil
+		}
+
 		if err := o.Prefix.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("ibcCoreConnectionV1ConnectionOK" + "." + "connection" + "." + "counterparty" + "." + "prefix")

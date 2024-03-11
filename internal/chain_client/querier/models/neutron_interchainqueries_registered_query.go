@@ -133,6 +133,11 @@ func (m *NeutronInterchainqueriesRegisteredQuery) contextValidateKeys(ctx contex
 	for i := 0; i < len(m.Keys); i++ {
 
 		if m.Keys[i] != nil {
+
+			if swag.IsZero(m.Keys[i]) { // not required
+				return nil
+			}
+
 			if err := m.Keys[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("keys" + "." + strconv.Itoa(i))
@@ -151,6 +156,11 @@ func (m *NeutronInterchainqueriesRegisteredQuery) contextValidateKeys(ctx contex
 func (m *NeutronInterchainqueriesRegisteredQuery) contextValidateLastSubmittedResultRemoteHeight(ctx context.Context, formats strfmt.Registry) error {
 
 	if m.LastSubmittedResultRemoteHeight != nil {
+
+		if swag.IsZero(m.LastSubmittedResultRemoteHeight) { // not required
+			return nil
+		}
+
 		if err := m.LastSubmittedResultRemoteHeight.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("last_submitted_result_remote_height")
