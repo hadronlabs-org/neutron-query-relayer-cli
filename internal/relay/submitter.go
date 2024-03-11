@@ -11,5 +11,4 @@ import (
 // Submitter knows how to submit proof to the chain
 type Submitter interface {
 	SubmitKVProof(ctx context.Context, height, revision, queryId uint64, proof []*neutrontypes.StorageValue, updateClientMsg sdk.Msg) error
-	SubmitTxProof(ctx context.Context, queryId uint64, proof *neutrontypes.Block) (string, error)
 }

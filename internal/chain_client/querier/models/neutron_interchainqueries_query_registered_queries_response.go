@@ -110,6 +110,11 @@ func (m *NeutronInterchainqueriesQueryRegisteredQueriesResponse) ContextValidate
 func (m *NeutronInterchainqueriesQueryRegisteredQueriesResponse) contextValidatePagination(ctx context.Context, formats strfmt.Registry) error {
 
 	if m.Pagination != nil {
+
+		if swag.IsZero(m.Pagination) { // not required
+			return nil
+		}
+
 		if err := m.Pagination.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("pagination")
@@ -128,6 +133,11 @@ func (m *NeutronInterchainqueriesQueryRegisteredQueriesResponse) contextValidate
 	for i := 0; i < len(m.RegisteredQueries); i++ {
 
 		if m.RegisteredQueries[i] != nil {
+
+			if swag.IsZero(m.RegisteredQueries[i]) { // not required
+				return nil
+			}
+
 			if err := m.RegisteredQueries[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("registered_queries" + "." + strconv.Itoa(i))
@@ -323,6 +333,11 @@ func (m *NeutronInterchainqueriesQueryRegisteredQueriesResponseRegisteredQueries
 	for i := 0; i < len(m.Keys); i++ {
 
 		if m.Keys[i] != nil {
+
+			if swag.IsZero(m.Keys[i]) { // not required
+				return nil
+			}
+
 			if err := m.Keys[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("keys" + "." + strconv.Itoa(i))
@@ -341,6 +356,11 @@ func (m *NeutronInterchainqueriesQueryRegisteredQueriesResponseRegisteredQueries
 func (m *NeutronInterchainqueriesQueryRegisteredQueriesResponseRegisteredQueriesItems0) contextValidateLastSubmittedResultRemoteHeight(ctx context.Context, formats strfmt.Registry) error {
 
 	if m.LastSubmittedResultRemoteHeight != nil {
+
+		if swag.IsZero(m.LastSubmittedResultRemoteHeight) { // not required
+			return nil
+		}
+
 		if err := m.LastSubmittedResultRemoteHeight.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("last_submitted_result_remote_height")

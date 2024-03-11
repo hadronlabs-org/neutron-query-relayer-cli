@@ -5,23 +5,14 @@ import (
 	"time"
 
 	"github.com/kelseyhightower/envconfig"
-
-	"github.com/neutron-org/neutron-query-relayer/internal/registry"
 )
 
 // NeutronQueryRelayerConfig describes configuration of the app
 type NeutronQueryRelayerConfig struct {
-	NeutronChain                *NeutronChainConfig      `split_words:"true"`
-	TargetChain                 *TargetChainConfig       `split_words:"true"`
-	Registry                    *registry.RegistryConfig `split_words:"true"`
-	AllowTxQueries              bool                     `required:"true" split_words:"true"`
-	AllowKVCallbacks            bool                     `required:"true" split_words:"true"`
-	StoragePath                 string                   `required:"true" split_words:"true"`
-	CheckSubmittedTxStatusDelay time.Duration            `split_words:"true" default:"10s"`
-	QueriesTaskQueueCapacity    int                      `split_words:"true" default:"10000"`
-	InitialTxSearchOffset       uint64                   `split_words:"true" default:"0"`
-	ListenAddr                  string                   `split_words:"true" default:"127.0.0.1:9999"`
-	IgnoreErrorsRegex           string                   `split_words:"true" default:"(execute wasm contract failed|failed to build tx query string)"`
+	NeutronChain     *NeutronChainConfig `split_words:"true"`
+	TargetChain      *TargetChainConfig  `split_words:"true"`
+	AllowKVCallbacks bool                `required:"true" split_words:"true"`
+	StoragePath      string              `required:"true" split_words:"true"`
 }
 
 const EnvPrefix string = "RELAYER"

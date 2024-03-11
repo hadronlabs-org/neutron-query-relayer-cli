@@ -9,21 +9,17 @@ import (
 	"github.com/avast/retry-go/v4"
 	cosmosrelayer "github.com/cosmos/relayer/v2/relayer"
 
-	"github.com/neutron-org/neutron-query-relayer/internal/storage"
-
 	"time"
 
 	rpcclienthttp "github.com/cometbft/cometbft/rpc/client/http"
 	"go.uber.org/zap"
 
 	nlogger "github.com/neutron-org/neutron-logger"
+	"github.com/neutron-org/neutron-query-relayer/internal/chain_client"
+	"github.com/neutron-org/neutron-query-relayer/internal/chain_client/querier/client/query"
 	"github.com/neutron-org/neutron-query-relayer/internal/config"
 	"github.com/neutron-org/neutron-query-relayer/internal/raw"
-	"github.com/neutron-org/neutron-query-relayer/internal/registry"
 	"github.com/neutron-org/neutron-query-relayer/internal/relay"
-	"github.com/neutron-org/neutron-query-relayer/internal/subscriber"
-	"github.com/neutron-org/neutron-query-relayer/internal/subscriber/querier/client/query"
-	neutrontypes "github.com/neutron-org/neutron/x/interchainqueries/types"
 )
 
 var (
@@ -33,7 +29,7 @@ var (
 
 const (
 	AppContext                   = "app"
-	SubscriberContext            = "subscriber"
+	ChainClientContext           = "chain_client"
 	RelayerContext               = "relayer"
 	TargetChainRPCClientContext  = "target_chain_rpc"
 	NeutronChainRPCClientContext = "neutron_chain_rpc"
@@ -51,22 +47,18 @@ var (
 	rtyErr = retry.LastErrorOnly(true)
 )
 
-func NewDefaultSubscriber(cfg config.NeutronQueryRelayerConfig, logRegistry *nlogger.Registry) (relay.Subscriber, error) {
-	watchedMsgTypes := []neutrontypes.InterchainQueryType{neutrontypes.InterchainQueryTypeKV}
+func NewDefaultChainClient(cfg config.NeutronQueryRelayerConfig, logRegistry *nlogger.Registry) (relay.Subscriber, error) {
 
-	subscriber, err := subscriber.NewSubscriber(
-		&subscriber.SubscriberConfig{
-			RPCAddress:   cfg.NeutronChain.RPCAddr,
+	subscriber, err := chain_client.NewChainClient(
+		&chain_client.ChainClientConfig{
 			RESTAddress:  cfg.NeutronChain.RESTAddr,
 			Timeout:      cfg.NeutronChain.Timeout,
 			ConnectionID: cfg.NeutronChain.ConnectionID,
-			WatchedTypes: watchedMsgTypes,
-			Registry:     registry.New(cfg.Registry),
 		},
-		logRegistry.Get(SubscriberContext),
+		logRegistry.Get(ChainClientContext),
 	)
 	if err != nil {
-		return nil, fmt.Errorf("failed to create a NewSubscriber: %s", err)
+		return nil, fmt.Errorf("failed to create a NewChainClient: %s", err)
 	}
 
 	return subscriber, nil
@@ -85,7 +77,6 @@ func NewDefaultRelayer(
 			deps.GetTargetQuerier(),
 			logRegistry.Get(KVProcessorContext),
 			deps.GetProofSubmitter(),
-			storage,
 			deps.GetTargetChain(),
 			deps.GetNeutronChain(),
 		)
@@ -103,7 +94,6 @@ func NewDefaultRelayer(
 // NewDefaultRelayer returns a relayer built with cfg.
 func NewDefaultKVProcessor(
 	logRegistry *nlogger.Registry,
-	storage relay.Storage,
 	deps *DependencyContainer,
 ) (*kvprocessor.KVProcessor, error) {
 	var (
@@ -112,26 +102,11 @@ func NewDefaultKVProcessor(
 			deps.GetTargetQuerier(),
 			logRegistry.Get(KVProcessorContext),
 			deps.GetProofSubmitter(),
-			storage,
 			deps.GetTargetChain(),
 			deps.GetNeutronChain(),
 		)
 	)
 	return kvProcessor, nil
-}
-
-func NewDefaultStorage(cfg config.NeutronQueryRelayerConfig, logger *zap.Logger) (relay.Storage, error) {
-	var (
-		err            error
-		leveldbStorage relay.Storage
-	)
-
-	leveldbStorage, err = storage.NewLevelDBStorage(cfg.StoragePath)
-	if err != nil {
-		return nil, fmt.Errorf("failed to create NewLevelDBStorage: %w", err)
-	}
-
-	return leveldbStorage, nil
 }
 
 func loadChains(

@@ -29,8 +29,7 @@ type DependencyContainer struct {
 
 func NewDefaultDependencyContainer(ctx context.Context,
 	cfg config.NeutronQueryRelayerConfig,
-	logRegistry *nlogger.Registry,
-	storage relay.Storage) (*DependencyContainer, error) {
+	logRegistry *nlogger.Registry) (*DependencyContainer, error) {
 	targetClient, err := raw.NewRPCClient(cfg.TargetChain.RPCAddr, cfg.TargetChain.Timeout)
 	if err != nil {
 		return nil, fmt.Errorf("could not initialize target rpc client: %w", err)
@@ -81,7 +80,6 @@ func NewDefaultDependencyContainer(ctx context.Context,
 		targetQuerier,
 		logRegistry.Get(KVProcessorContext),
 		proofSubmitter,
-		storage,
 		targetChain,
 		neutronChain,
 	)

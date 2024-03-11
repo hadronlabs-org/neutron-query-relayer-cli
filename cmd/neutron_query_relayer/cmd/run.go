@@ -4,10 +4,6 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"os"
-	"os/signal"
-	"sync"
-	"syscall"
 
 	neutronapp "github.com/neutron-org/neutron/app"
 
@@ -59,7 +55,7 @@ func startRelayer(queryIds []string) error {
 	logRegistry, err := nlogger.NewRegistry(
 		mainContext,
 		app.AppContext,
-		app.SubscriberContext,
+		app.ChainClientContext,
 		app.RelayerContext,
 		app.TargetChainRPCClientContext,
 		app.NeutronChainRPCClientContext,
@@ -81,65 +77,39 @@ func startRelayer(queryIds []string) error {
 	}
 
 	ctx, cancel := context.WithCancel(context.Background())
-	wg := &sync.WaitGroup{}
 
-	// The storage has to be shared because of the LevelDB single process restriction.
-	storage, err := app.NewDefaultStorage(cfg, logger)
-	if err != nil {
-		logger.Fatal("failed to create NewDefaultStorage", zap.Error(err))
-	}
-	defer func(storage relay.Storage) {
-		if err := storage.Close(); err != nil {
-			logger.Error("failed to close storage", zap.Error(err))
-		}
-	}(storage)
-
-	subscriber, err := app.NewDefaultSubscriber(cfg, logRegistry)
+	chainClient, err := app.NewDefaultChainClient(cfg, logRegistry)
 	if err != nil {
 		logger.Fatal("Failed to get NewDefaultSubscriber", zap.Error(err))
 	}
 
-	deps, err := app.NewDefaultDependencyContainer(ctx, cfg, logRegistry, storage)
+	deps, err := app.NewDefaultDependencyContainer(ctx, cfg, logRegistry)
 	if err != nil {
 		logger.Fatal("failed to initialize dependency container", zap.Error(err))
 	}
 
-	kvprocessor, err := app.NewDefaultKVProcessor(logRegistry, storage, deps)
+	kvprocessor, err := app.NewDefaultKVProcessor(logRegistry, deps)
 	if err != nil {
 		logger.Fatal("Failed to get NewDefaultKVProcessor", zap.Error(err))
 	}
 
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-
-		// The subscriber writes to the tasks queue.
-		for _, queryId := range queryIds {
-			query, err := subscriber.GetNeutronRegisteredQuery(ctx, queryId)
-			if err != nil {
-				logger.Error("could not getNeutronRegisteredQueries: %w", zap.Error(err))
-			}
-
-			fmt.Println(query)
-
-			msg := &relay.MessageKV{QueryId: query.Id, KVKeys: query.Keys}
-			kvprocessor.ProcessAndSubmit(ctx, msg)
+	for _, queryId := range queryIds {
+		query, err := chainClient.GetNeutronRegisteredQuery(ctx, queryId)
+		if err != nil {
+			logger.Error("could not getNeutronRegisteredQueries: %w", zap.Error(err))
 		}
 
-		fmt.Println("end of submission")
-	}()
+		fmt.Println(query)
 
-	go func() {
-		sigs := make(chan os.Signal, 1)
-		signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
+		msg := &relay.MessageKV{QueryId: query.Id, KVKeys: query.Keys}
+		if err = kvprocessor.ProcessAndSubmit(ctx, msg); err != nil {
+			logger.Error("unable to process and submit KV query: %w", zap.Error(err))
+		}
+	}
 
-		s := <-sigs
-		logger.Info("Received termination signal, gracefully shutting down...",
-			zap.String("signal", s.String()))
-		cancel()
-	}()
+	cancel()
 
-	wg.Wait()
+	fmt.Println("end of submission")
 
 	return nil
 }

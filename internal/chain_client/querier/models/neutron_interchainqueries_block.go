@@ -133,6 +133,11 @@ func (m *NeutronInterchainqueriesBlock) ContextValidate(ctx context.Context, for
 func (m *NeutronInterchainqueriesBlock) contextValidateHeader(ctx context.Context, formats strfmt.Registry) error {
 
 	if m.Header != nil {
+
+		if swag.IsZero(m.Header) { // not required
+			return nil
+		}
+
 		if err := m.Header.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("header")
@@ -149,6 +154,11 @@ func (m *NeutronInterchainqueriesBlock) contextValidateHeader(ctx context.Contex
 func (m *NeutronInterchainqueriesBlock) contextValidateNextBlockHeader(ctx context.Context, formats strfmt.Registry) error {
 
 	if m.NextBlockHeader != nil {
+
+		if swag.IsZero(m.NextBlockHeader) { // not required
+			return nil
+		}
+
 		if err := m.NextBlockHeader.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("next_block_header")
@@ -165,6 +175,11 @@ func (m *NeutronInterchainqueriesBlock) contextValidateNextBlockHeader(ctx conte
 func (m *NeutronInterchainqueriesBlock) contextValidateTx(ctx context.Context, formats strfmt.Registry) error {
 
 	if m.Tx != nil {
+
+		if swag.IsZero(m.Tx) { // not required
+			return nil
+		}
+
 		if err := m.Tx.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("tx")
@@ -610,6 +625,11 @@ func (m *NeutronInterchainqueriesBlockTx) ContextValidate(ctx context.Context, f
 func (m *NeutronInterchainqueriesBlockTx) contextValidateDeliveryProof(ctx context.Context, formats strfmt.Registry) error {
 
 	if m.DeliveryProof != nil {
+
+		if swag.IsZero(m.DeliveryProof) { // not required
+			return nil
+		}
+
 		if err := m.DeliveryProof.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("tx" + "." + "delivery_proof")
@@ -626,6 +646,11 @@ func (m *NeutronInterchainqueriesBlockTx) contextValidateDeliveryProof(ctx conte
 func (m *NeutronInterchainqueriesBlockTx) contextValidateInclusionProof(ctx context.Context, formats strfmt.Registry) error {
 
 	if m.InclusionProof != nil {
+
+		if swag.IsZero(m.InclusionProof) { // not required
+			return nil
+		}
+
 		if err := m.InclusionProof.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("tx" + "." + "inclusion_proof")
@@ -642,6 +667,11 @@ func (m *NeutronInterchainqueriesBlockTx) contextValidateInclusionProof(ctx cont
 func (m *NeutronInterchainqueriesBlockTx) contextValidateResponse(ctx context.Context, formats strfmt.Registry) error {
 
 	if m.Response != nil {
+
+		if swag.IsZero(m.Response) { // not required
+			return nil
+		}
+
 		if err := m.Response.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("tx" + "." + "response")
@@ -857,6 +887,11 @@ func (m *NeutronInterchainqueriesBlockTxResponse) contextValidateEvents(ctx cont
 	for i := 0; i < len(m.Events); i++ {
 
 		if m.Events[i] != nil {
+
+			if swag.IsZero(m.Events[i]) { // not required
+				return nil
+			}
+
 			if err := m.Events[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("tx" + "." + "response" + "." + "events" + "." + strconv.Itoa(i))
@@ -963,6 +998,11 @@ func (m *NeutronInterchainqueriesBlockTxResponseEventsItems0) contextValidateAtt
 	for i := 0; i < len(m.Attributes); i++ {
 
 		if m.Attributes[i] != nil {
+
+			if swag.IsZero(m.Attributes[i]) { // not required
+				return nil
+			}
+
 			if err := m.Attributes[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("attributes" + "." + strconv.Itoa(i))

@@ -26,7 +26,6 @@ type KVProcessor struct {
 	querier              *tmquerier.Querier
 	logger               *zap.Logger
 	submitter            relay.Submitter
-	storage              relay.Storage
 	targetChain          *relayer.Chain
 	neutronChain         *relayer.Chain
 }
@@ -36,7 +35,6 @@ func NewKVProcessor(
 	querier *tmquerier.Querier,
 	logger *zap.Logger,
 	submitter relay.Submitter,
-	storage relay.Storage,
 	targetChain *relayer.Chain,
 	neutronChain *relayer.Chain) *KVProcessor {
 	return &KVProcessor{
@@ -44,7 +42,6 @@ func NewKVProcessor(
 		querier:              querier,
 		logger:               logger,
 		submitter:            submitter,
-		storage:              storage,
 		targetChain:          targetChain,
 		neutronChain:         neutronChain,
 	}
@@ -88,15 +85,20 @@ func (p *KVProcessor) submitKVWithProof(
 	queryID uint64,
 	proof []*neutrontypes.StorageValue,
 ) error {
+	fmt.Println("submitKVWithProof 1")
 	srcHeader, err := p.getSrcChainHeader(ctx, height)
 	if err != nil {
 		return fmt.Errorf("failed to get header for height: %d: %w", height, err)
 	}
 
+	fmt.Println("submitKVWithProof 2")
+
 	updateClientMsg, err := p.getUpdateClientMsg(ctx, srcHeader)
 	if err != nil {
 		return fmt.Errorf("failed to getUpdateClientMsg: %w", err)
 	}
+
+	fmt.Println("submitKVWithProof 3")
 
 	if err = p.submitter.SubmitKVProof(
 		ctx,
@@ -106,9 +108,14 @@ func (p *KVProcessor) submitKVWithProof(
 		proof,
 		updateClientMsg,
 	); err != nil {
+		fmt.Println("submitKVWithProof 3.1")
 		return fmt.Errorf("could not submit proof: %w", err)
 	}
+
+	fmt.Println("submitKVWithProof 4")
 	p.logger.Info("proof for query_id submitted successfully", zap.Uint64("query_id", queryID), zap.Uint64("remote_height", uint64(height-1)), zap.Uint64("trusted_header_height", srcHeader.GetHeight().GetRevisionHeight()))
+
+	fmt.Println("submitKVWithProof 5")
 	return nil
 }
 

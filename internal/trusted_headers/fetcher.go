@@ -72,6 +72,8 @@ func (thf *TrustedHeaderFetcher) Fetch(ctx context.Context, height uint64) (head
 		return
 	}
 
+	fmt.Println("exit from Fetch")
+
 	return
 }
 
