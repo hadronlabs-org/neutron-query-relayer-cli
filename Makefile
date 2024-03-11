@@ -5,7 +5,7 @@ ldflags = -X github.com/neutron-org/neutron-query-relayer/internal/app.Version=$
 		  -X github.com/neutron-org/neutron-query-relayer/internal/app.Commit=$(COMMIT)
 
 dev: clean
-	go run ./cmd/neutron_query_relayer/ run -q 1
+	go run ./cmd/neutron_query_relayer/ run -q $(QUERY_ID)
 
 clean:
 	@echo "Removing relayer storage state"

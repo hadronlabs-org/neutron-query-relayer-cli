@@ -16,7 +16,7 @@ For more configuration parameters see [Environment section](#Environment).
 1. Build docker image 
 `make build-docker`
 2. Run
-`docker run --env-file .env.example -v $PWD/../neutron/data:/data -p 9999:9999 neutron-org/neutron-query-relayer`
+`docker run --env-file .env.example -v $PWD/../neutron/data:/data -p 9999:9999 neutron-org/neutron-query-relayer-cli`
    - note: this command uses relative path to mount keys, run this from root path of `neutron-query-relayer`
    - note: with local chains use `host.docker.internal` in `RELAYER_NEUTRON_CHAIN_RPC_ADDR` and `RELAYER_TARGET_CHAIN_RPC_ADDR` instead of `localhost`/`127.0.0.1`
    - note: on Linux machines it is necessary to pass --add-host=host.docker.internal:host-gateway to Docker in order to make container able to access host network
@@ -50,7 +50,7 @@ Clone the following repositories to the same folder where the neutron-query-rela
 #### terminal 3
 
 1. `cp .env.example.dev .env`, edit `.env` if desired
-2. `export $(grep -v '^#' .env | xargs) && make dev`
+2. `export $(grep -v '^#' .env | xargs) && make dev QUERY_ID=<query id to relay>`
 
 ### Testing via docker
 
@@ -99,15 +99,8 @@ Relayer:
 | `RELAYER_TARGET_CHAIN_TIMEOUT `                  | `time`            | timeout of target chain provider                                                                                                                                           | optional |
 | `RELAYER_TARGET_CHAIN_DEBUG `                    | `bool`            | flag to run target chain provider in debug mode                                                                                                                            | optional |
 | `RELAYER_TARGET_CHAIN_OUTPUT_FORMAT`             | `json`  or `yaml` | target chain provider output format                                                                                                                                        | optional |
-| `RELAYER_REGISTRY_ADDRESSES`                     | `string`          | a list of comma-separated smart-contract addresses for which the relayer processes interchain queries                                                                      | required |
-| `RELAYER_ALLOW_TX_QUERIES`                       | `bool`            | if true relayer will process tx queries  (if `false`, relayer will drop them)                                                                                              | required |
 | `RELAYER_ALLOW_KV_CALLBACKS`                     | `bool`            | if `true`, will pass proofs as sudo callbacks to contracts                                                                                                                 | required |
-| `RELAYER_MIN_KV_UPDATE_PERIOD`                   | `uint`            | minimal period of queries execution and submission (not less than `n` blocks)                                                                                              | optional |
-| `RELAYER_STORAGE_PATH`                           | `string`          | path to leveldb storage, will be created on given path if doesn't exists <br/> (required if `RELAYER_ALLOW_TX_QUERIES` is `true`)                                          | optional |
-| `RELAYER_CHECK_SUBMITTED_TX_STATUS_DELAY`        | `uint`            | delay in seconds to wait before transaction is checked for commit status                                                                                                   | optional |
-| `RELAYER_QUERIES_TASK_QUEUE_CAPACITY`            | `int`             | capacity of the channel that is used to send messages from subscriber to relayer (better set to a higher value to avoid problems with Tendermint websocket subscriptions). | optional |
-| `RELAYER_INITIAL_TX_SEARCH_OFFSET`               | `uint`            | if set to non zero and no prior search height exists, it will initially set to (last_height - X). Set this if you have lots of old tx's on first start you don't need.     | optional |
-| `RELAYER_LISTEN_ADDR`                            | `string`          | listener address for webserver json api you can query and prometheus metrics                                                                                               | optional |
+
 
 # Logging
 
