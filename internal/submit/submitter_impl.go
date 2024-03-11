@@ -27,18 +27,14 @@ func (si *SubmitterImpl) SubmitKVProof(
 	proof []*neutrontypes.StorageValue,
 	updateClientMsg sdk.Msg,
 ) error {
-	fmt.Println("SubmitKVProof 1")
 	msgs, err := si.buildProofMsg(height, revision, queryId, si.allowKVCallbacks, proof)
 	if err != nil {
-		fmt.Println("SubmitKVProof 1.1")
 		return fmt.Errorf("could not build proof msg: %w", err)
 	}
-	fmt.Println("SubmitKVProof 2")
 
 	msgs = append([]sdk.Msg{updateClientMsg}, msgs...)
-	fmt.Println("SubmitKVProof 3")
 	_, err = si.sender.Send(ctx, msgs)
-	fmt.Println("SubmitKVProof 4")
+
 	return err
 }
 

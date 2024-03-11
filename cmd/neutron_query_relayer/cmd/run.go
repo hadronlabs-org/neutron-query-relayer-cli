@@ -30,7 +30,6 @@ var RunCmd = &cobra.Command{
 	Short: "Run the query relayer main app",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		queryIds, err := cmd.Flags().GetStringSlice(QueryIdFlagName)
-		fmt.Println(queryIds)
 		if len(queryIds) == 0 {
 			return fmt.Errorf("empty list of query ids to relay")
 		}
@@ -99,8 +98,6 @@ func startRelayer(queryIds []string) error {
 			logger.Error("could not getNeutronRegisteredQueries: %w", zap.Error(err))
 		}
 
-		fmt.Println(query)
-
 		msg := &relay.MessageKV{QueryId: query.Id, KVKeys: query.Keys}
 		if err = kvprocessor.ProcessAndSubmit(ctx, msg); err != nil {
 			logger.Error("unable to process and submit KV query: %w", zap.Error(err))
@@ -108,8 +105,6 @@ func startRelayer(queryIds []string) error {
 	}
 
 	cancel()
-
-	fmt.Println("end of submission")
 
 	return nil
 }
