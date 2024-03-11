@@ -73,23 +73,28 @@ func startRelayer(queryIds []string) error {
 	cfg, err := config.NewNeutronQueryRelayerConfig()
 	if err != nil {
 		logger.Fatal("cannot initialize relayer config", zap.Error(err))
+		return nil
 	}
 
 	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
 	chainClient, err := app.NewDefaultChainClient(cfg, logRegistry)
 	if err != nil {
 		logger.Fatal("Failed to get NewDefaultSubscriber", zap.Error(err))
+		return nil
 	}
 
 	deps, err := app.NewDefaultDependencyContainer(ctx, cfg, logRegistry)
 	if err != nil {
 		logger.Fatal("failed to initialize dependency container", zap.Error(err))
+		return nil
 	}
 
 	kvprocessor, err := app.NewDefaultKVProcessor(logRegistry, deps)
 	if err != nil {
 		logger.Fatal("Failed to get NewDefaultKVProcessor", zap.Error(err))
+		return nil
 	}
 
 	for _, queryId := range queryIds {
@@ -103,8 +108,6 @@ func startRelayer(queryIds []string) error {
 			logger.Error("unable to process and submit KV query: %w", zap.Error(err))
 		}
 	}
-
-	cancel()
 
 	return nil
 }
