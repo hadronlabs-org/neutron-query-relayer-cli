@@ -1,0 +1,98 @@
+version: "3"
+services:
+  neutron_ics:
+    image: neutron-test:1.0.0
+    command:
+      - start
+      - --home=/opt
+      - --pruning=nothing
+      - --log_format=json
+      - --log_level=debug
+      - --trace
+    entrypoint:
+      - neutrond
+    volumes:
+      - neutron_ics:/opt
+    ports:
+      - 26657:26657
+      - 1317:1317
+      - 9090:9090
+  gaia_val1:
+    image: gaia-test:1.0.0
+    command:
+      - start
+      - --home=/opt
+      - --log_level=debug
+      - --pruning=nothing
+      - --log_format=info
+      - --trace
+    entrypoint:
+      - gaiad
+    volumes:
+      - gaia_val1:/opt
+    ports:
+      - 127.0.0.1:26658:26657
+      - 127.0.0.1:1318:1317
+      - 127.0.0.1:9091:9090
+  gaia_val2:
+    image: gaia-test:1.0.0
+    command:
+      - start
+      - --home=/opt
+      - --log_level=debug
+      - --pruning=nothing
+      - --log_format=info
+      - --trace
+    entrypoint:
+      - gaiad
+    volumes:
+      - gaia_val2:/opt
+  relayer_hermes0:
+    image: hermes-test:1.0.0
+    command:
+      - -c
+      - /root/start.sh
+    volumes:
+      - relayer_hermes0:/root
+    entrypoint:
+      - /bin/bash
+    depends_on:
+      - neutron_ics
+      - gaia_val1
+  relayer_neutron1:
+    image: neutron-query-relayer-cli-test:1.0.0
+    entrypoint:
+      - ./run.sh
+    depends_on:
+      - neutron_ics
+      - gaia_val1
+    volumes:
+      - neutron_ics:/data
+    environment:
+      - NODE=neutron_ics
+      - LOGGER_LEVEL=debug
+      - RELAYER_NEUTRON_CHAIN_CHAIN_PREFIX=neutron
+      - RELAYER_NEUTRON_CHAIN_RPC_ADDR=tcp://neutron_ics:26657
+      - RELAYER_NEUTRON_CHAIN_REST_ADDR=http://neutron_ics:1317
+      - RELAYER_NEUTRON_CHAIN_HOME_DIR=/data
+      - RELAYER_NEUTRON_CHAIN_SIGN_KEY_NAME=relayer_1
+      - RELAYER_NEUTRON_CHAIN_GAS_PRICES=0.5untrn
+      - RELAYER_NEUTRON_CHAIN_GAS_ADJUSTMENT=1.5
+      - RELAYER_NEUTRON_CHAIN_CONNECTION_ID=connection-0
+      - RELAYER_NEUTRON_CHAIN_DEBUG=true
+      - RELAYER_NEUTRON_CHAIN_ACCOUNT_PREFIX=neutron
+      - RELAYER_NEUTRON_CHAIN_KEYRING_BACKEND=test
+      - RELAYER_TARGET_CHAIN_RPC_ADDR=tcp://gaia_val1:26657
+      - RELAYER_TARGET_CHAIN_ACCOUNT_PREFIX=cosmos
+      - RELAYER_TARGET_CHAIN_VALIDATOR_ACCOUNT_PREFIX=cosmosvaloper
+      - RELAYER_TARGET_CHAIN_DEBUG=true
+      - RELAYER_REGISTRY_ADDRESSES=
+      - RELAYER_ALLOW_TX_QUERIES=true
+      - RELAYER_ALLOW_KV_CALLBACKS=true
+      - RELAYER_STORAGE_PATH=/data/relayer/storage/leveldb
+      - RELAYER_LISTEN_ADDR=0.0.0.0:9999
+volumes:
+  neutron_ics: null
+  gaia_val1: null
+  gaia_val2: null
+  relayer_hermes0: null

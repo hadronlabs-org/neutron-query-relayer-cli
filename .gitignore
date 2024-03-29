@@ -31,3 +31,4 @@ storage
 .env
 
 /data
+coordinator/node_modules/
