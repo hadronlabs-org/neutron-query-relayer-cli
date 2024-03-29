@@ -1,6 +1,6 @@
 import { generate } from '@neutron-org/contracts2ts';
 
 generate({
-  src: '../',
+  src: '../../drop-contracts',
   out: './src/generated/contractLib',
 });

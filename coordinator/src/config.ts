@@ -5,6 +5,7 @@ export class Config {
   manager: {
     neutronMnemonic: string;
     targetMnemonic: string;
+    factoryContractAddress: string;
   };
   neutron: {
     rpc: string;
@@ -39,6 +40,7 @@ export class Config {
     this.manager = {
       neutronMnemonic: process.env.MANAGER_NEUTRON_MNEMONIC,
       targetMnemonic: process.env.MANAGER_TARGET_MNEMONIC,
+      factoryContractAddress: process.env.FACTORY_CONTRACT_ADDRESS,
     };
 
     this.neutron = {

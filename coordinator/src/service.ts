@@ -1,6 +1,6 @@
 import { DirectSecp256k1HdWallet } from '@cosmjs/proto-signing';
 import { Client as NeutronClient } from '@neutron-org/client-ts';
-import { ManagerModule } from './types/module';
+import { ManagerModule } from './types/Module';
 import dotenv from 'dotenv';
 import { SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate';
 import {
@@ -12,9 +12,10 @@ import { Tendermint34Client } from '@cosmjs/tendermint-rpc';
 import { PumpModule } from './modules/pump';
 import { logger } from './logger';
 import { Config } from './config';
-import { Context } from './types/context';
+import { Context } from './types/Context';
 import pino from 'pino';
 import { CoreModule } from './modules/core';
+import { DropFactory } from './generated/contractLib';
 
 export type Uint128 = string;
 
@@ -57,9 +58,22 @@ class Service {
       config.neutron.rpc,
     );
 
+    const neutronSigningClient = await SigningCosmWasmClient.connectWithSigner(
+      config.neutron.rpc,
+      neutronWallet,
+      {
+        gasPrice: config.neutron.gasPrice,
+      },
+    );
+    const factoryState = await this.fetchFactoryState(
+      neutronSigningClient,
+      config.manager.factoryContractAddress,
+    );
+
     this.context = {
       config: config,
       neutronWallet,
+      factoryState,
       neutronWalletAddress: (await neutronWallet.getAccounts())[0].address,
       targetWallet,
       targetWalletAddress: (await targetWallet.getAccounts())[0].address,
@@ -73,13 +87,7 @@ class Service {
         rpcURL: config.neutron.rpc,
         prefix: 'neutron',
       }),
-      neutronSigningClient: await SigningCosmWasmClient.connectWithSigner(
-        config.neutron.rpc,
-        neutronWallet,
-        {
-          gasPrice: config.neutron.gasPrice,
-        },
-      ),
+      neutronSigningClient,
       targetSigningClient: await SigningCosmWasmClient.connectWithSigner(
         config.target.rpc,
         targetWallet,
@@ -123,6 +131,17 @@ class Service {
     for (const module of this.modulesList) {
       await module.run();
     }
+  }
+
+  private async fetchFactoryState(
+    client: SigningCosmWasmClient,
+    factoryContractAddress: string,
+  ) {
+    const factoryContractClient = new DropFactory.Client(
+      client,
+      factoryContractAddress,
+    );
+    return await factoryContractClient.queryState();
   }
 }
 

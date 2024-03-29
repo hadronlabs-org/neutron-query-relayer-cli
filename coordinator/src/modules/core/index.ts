@@ -1,7 +1,7 @@
-import { ManagerModule } from '../../types/module';
+import { ManagerModule } from '../../types/Module';
 import { DropCore } from '../../generated/contractLib';
 import { CoreConfig } from './types/config';
-import { Context } from '../../types/context';
+import { Context } from '../../types/Context';
 import pino from 'pino';
 import { ContractState } from '../../generated/contractLib/dropCore';
 
@@ -44,7 +44,7 @@ export class CoreModule implements ManagerModule {
 
   prepareConfig(): CoreConfig {
     this._config = {
-      contractAddress: process.env.CORE_CONTRACT_ADDRESS,
+      contractAddress: this.context.factoryState.core_contract,
     };
 
     return this.config;

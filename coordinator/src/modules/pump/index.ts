@@ -1,7 +1,7 @@
-import { ManagerModule } from '../../types/module';
+import { ManagerModule } from '../../types/Module';
 import { DropPump } from '../../generated/contractLib';
 import { PumpConfig } from './types/pump-config';
-import { Context } from '../../types/context';
+import { Context } from '../../types/Context';
 import { Uint64 } from '@cosmjs/math';
 import pino from 'pino';
 
