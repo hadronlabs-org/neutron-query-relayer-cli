@@ -23,7 +23,7 @@ import (
 	authtxtypes "github.com/cosmos/cosmos-sdk/x/auth/tx"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
-	"github.com/neutron-org/neutron-query-relayer/internal/config"
+	"github.com/hadronlabs-org/neutron-query-relayer/internal/config"
 )
 
 const (

@@ -10,7 +10,7 @@ import (
 	httptransport "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
 
-	"github.com/neutron-org/neutron-query-relayer/internal/chain_client/querier/client/query"
+	"github.com/hadronlabs-org/neutron-query-relayer/internal/chain_client/querier/client/query"
 )
 
 // Default HTTP API console HTTP client.

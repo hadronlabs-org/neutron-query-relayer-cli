@@ -7,7 +7,7 @@ import (
 	"github.com/cosmos/relayer/v2/relayer/chains/cosmos"
 	"go.uber.org/zap"
 
-	"github.com/neutron-org/neutron-query-relayer/internal/config"
+	"github.com/hadronlabs-org/neutron-query-relayer/internal/config"
 	neutronapp "github.com/neutron-org/neutron/app"
 )
 

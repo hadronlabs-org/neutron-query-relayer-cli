@@ -16,7 +16,7 @@ For more configuration parameters see [Environment section](#Environment).
 1. Build docker image 
 `make build-docker`
 2. Run
-`docker run --env-file .env.example -v $PWD/../neutron/data:/data -p 9999:9999 neutron-org/neutron-query-relayer-cli`
+`docker run --env-file .env.example -v $PWD/../neutron/data:/data -p 9999:9999 hadronlabs-org/neutron-query-relayer-cli`
    - note: this command uses relative path to mount keys, run this from root path of `neutron-query-relayer`
    - note: with local chains use `host.docker.internal` in `RELAYER_NEUTRON_CHAIN_RPC_ADDR` and `RELAYER_TARGET_CHAIN_RPC_ADDR` instead of `localhost`/`127.0.0.1`
    - note: on Linux machines it is necessary to pass --add-host=host.docker.internal:host-gateway to Docker in order to make container able to access host network

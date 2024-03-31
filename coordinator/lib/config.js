@@ -15,7 +15,7 @@ class Config {
     }
     load() {
         this.manager = {
-            neutronMnemonic: process.env.MANAGER_NEUTRON_MNEMONIC,
+            neutronMnemonic: process.env.COORDINATOR_NEUTRON_MNEMONIC,
             targetMnemonic: process.env.MANAGER_TARGET_MNEMONIC,
         };
         this.neutron = {

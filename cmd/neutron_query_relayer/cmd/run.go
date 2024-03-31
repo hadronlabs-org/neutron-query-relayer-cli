@@ -7,14 +7,14 @@ import (
 
 	neutronapp "github.com/neutron-org/neutron/app"
 
-	"github.com/neutron-org/neutron-query-relayer/internal/relay"
+	"github.com/hadronlabs-org/neutron-query-relayer/internal/relay"
 
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
 
+	"github.com/hadronlabs-org/neutron-query-relayer/internal/app"
+	"github.com/hadronlabs-org/neutron-query-relayer/internal/config"
 	nlogger "github.com/neutron-org/neutron-logger"
-	"github.com/neutron-org/neutron-query-relayer/internal/app"
-	"github.com/neutron-org/neutron-query-relayer/internal/config"
 )
 
 const (

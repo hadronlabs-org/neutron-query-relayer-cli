@@ -6,7 +6,7 @@ import (
 
 	"github.com/cosmos/relayer/v2/relayer"
 
-	"github.com/neutron-org/neutron-query-relayer/internal/config"
+	"github.com/hadronlabs-org/neutron-query-relayer/internal/config"
 	neutrontypes "github.com/neutron-org/neutron/x/interchainqueries/types"
 
 	"go.uber.org/zap"

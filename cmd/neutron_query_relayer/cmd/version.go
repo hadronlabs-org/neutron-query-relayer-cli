@@ -5,7 +5,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/neutron-org/neutron-query-relayer/internal/app"
+	"github.com/hadronlabs-org/neutron-query-relayer/internal/app"
 )
 
 // versionCmd represents the version command

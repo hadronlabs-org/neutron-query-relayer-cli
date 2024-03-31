@@ -1,4 +1,4 @@
-module github.com/neutron-org/neutron-query-relayer
+module github.com/hadronlabs-org/neutron-query-relayer
 
 go 1.21
 

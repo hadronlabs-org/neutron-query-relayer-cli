@@ -16,6 +16,7 @@ import { Context } from './types/Context';
 import pino from 'pino';
 import { CoreModule } from './modules/core';
 import { DropFactory } from './generated/contractLib';
+import { exec } from 'child_process';
 
 export type Uint128 = string;
 
@@ -42,13 +43,13 @@ class Service {
   async init() {
     const config = new Config(this.log);
     const neutronWallet = await DirectSecp256k1HdWallet.fromMnemonic(
-      config.manager.neutronMnemonic,
+      config.coordinator.neutronMnemonic,
       {
         prefix: 'neutron',
       },
     );
     const targetWallet = await DirectSecp256k1HdWallet.fromMnemonic(
-      config.manager.targetMnemonic,
+      config.coordinator.targetMnemonic,
       {
         prefix: config.target.accountPrefix,
       },
@@ -67,7 +68,7 @@ class Service {
     );
     const factoryState = await this.fetchFactoryState(
       neutronSigningClient,
-      config.manager.factoryContractAddress,
+      config.coordinator.factoryContractAddress,
     );
 
     this.context = {
@@ -127,6 +128,18 @@ class Service {
   }
 
   async performWork() {
+    console.log('Performing work...');
+    exec(
+      `${this.context.config.coordinator.icqRunCmd} -q 1`,
+      (error, stdout, stderr) => {
+        if (error) {
+          console.error(`exec error: ${error}`);
+          return;
+        }
+        console.log(`stdout: ${stdout}`);
+        console.error(`stderr: ${stderr}`);
+      },
+    );
     await this.showStats();
     for (const module of this.modulesList) {
       await module.run();

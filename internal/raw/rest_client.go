@@ -4,7 +4,7 @@ import (
 	"fmt"
 	neturl "net/url"
 
-	restclient "github.com/neutron-org/neutron-query-relayer/internal/chain_client/querier/client"
+	restclient "github.com/hadronlabs-org/neutron-query-relayer/internal/chain_client/querier/client"
 )
 
 const restClientBasePath = "/"

@@ -8,14 +8,14 @@ import (
 
 	cosmosrelayer "github.com/cosmos/relayer/v2/relayer"
 
+	"github.com/hadronlabs-org/neutron-query-relayer/internal/config"
+	"github.com/hadronlabs-org/neutron-query-relayer/internal/kvprocessor"
+	"github.com/hadronlabs-org/neutron-query-relayer/internal/raw"
+	"github.com/hadronlabs-org/neutron-query-relayer/internal/relay"
+	"github.com/hadronlabs-org/neutron-query-relayer/internal/submit"
+	"github.com/hadronlabs-org/neutron-query-relayer/internal/tmquerier"
+	"github.com/hadronlabs-org/neutron-query-relayer/internal/trusted_headers"
 	nlogger "github.com/neutron-org/neutron-logger"
-	"github.com/neutron-org/neutron-query-relayer/internal/config"
-	"github.com/neutron-org/neutron-query-relayer/internal/kvprocessor"
-	"github.com/neutron-org/neutron-query-relayer/internal/raw"
-	"github.com/neutron-org/neutron-query-relayer/internal/relay"
-	"github.com/neutron-org/neutron-query-relayer/internal/submit"
-	"github.com/neutron-org/neutron-query-relayer/internal/tmquerier"
-	"github.com/neutron-org/neutron-query-relayer/internal/trusted_headers"
 )
 
 type DependencyContainer struct {

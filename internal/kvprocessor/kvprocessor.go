@@ -14,8 +14,8 @@ import (
 	"github.com/cosmos/relayer/v2/relayer/provider"
 	"go.uber.org/zap"
 
-	"github.com/neutron-org/neutron-query-relayer/internal/relay"
-	"github.com/neutron-org/neutron-query-relayer/internal/tmquerier"
+	"github.com/hadronlabs-org/neutron-query-relayer/internal/relay"
+	"github.com/hadronlabs-org/neutron-query-relayer/internal/tmquerier"
 	neutrontypes "github.com/neutron-org/neutron/x/interchainqueries/types"
 )
 

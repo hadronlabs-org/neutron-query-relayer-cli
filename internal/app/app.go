@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/neutron-org/neutron-query-relayer/internal/kvprocessor"
+	"github.com/hadronlabs-org/neutron-query-relayer/internal/kvprocessor"
 
 	"github.com/avast/retry-go/v4"
 	cosmosrelayer "github.com/cosmos/relayer/v2/relayer"
@@ -14,12 +14,12 @@ import (
 	rpcclienthttp "github.com/cometbft/cometbft/rpc/client/http"
 	"go.uber.org/zap"
 
+	"github.com/hadronlabs-org/neutron-query-relayer/internal/chain_client"
+	"github.com/hadronlabs-org/neutron-query-relayer/internal/chain_client/querier/client/query"
+	"github.com/hadronlabs-org/neutron-query-relayer/internal/config"
+	"github.com/hadronlabs-org/neutron-query-relayer/internal/raw"
+	"github.com/hadronlabs-org/neutron-query-relayer/internal/relay"
 	nlogger "github.com/neutron-org/neutron-logger"
-	"github.com/neutron-org/neutron-query-relayer/internal/chain_client"
-	"github.com/neutron-org/neutron-query-relayer/internal/chain_client/querier/client/query"
-	"github.com/neutron-org/neutron-query-relayer/internal/config"
-	"github.com/neutron-org/neutron-query-relayer/internal/raw"
-	"github.com/neutron-org/neutron-query-relayer/internal/relay"
 )
 
 var (

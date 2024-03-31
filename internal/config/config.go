@@ -12,7 +12,6 @@ type NeutronQueryRelayerConfig struct {
 	NeutronChain     *NeutronChainConfig `split_words:"true"`
 	TargetChain      *TargetChainConfig  `split_words:"true"`
 	AllowKVCallbacks bool                `required:"true" split_words:"true"`
-	StoragePath      string              `required:"true" split_words:"true"`
 }
 
 const EnvPrefix string = "RELAYER"

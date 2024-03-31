@@ -9,8 +9,8 @@ import (
 
 	httptransport "github.com/go-openapi/runtime/client"
 
-	restclient "github.com/neutron-org/neutron-query-relayer/internal/chain_client/querier/client"
-	"github.com/neutron-org/neutron-query-relayer/internal/chain_client/querier/client/query"
+	restclient "github.com/hadronlabs-org/neutron-query-relayer/internal/chain_client/querier/client"
+	"github.com/hadronlabs-org/neutron-query-relayer/internal/chain_client/querier/client/query"
 	neutrontypes "github.com/neutron-org/neutron/x/interchainqueries/types"
 )
 
