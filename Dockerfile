@@ -12,8 +12,8 @@ ADD ["https://github.com/CosmWasm/wasmvm/releases/download/v1.5.2/libwasmvm.x86_
 ADD run.sh .
 COPY --from=builder /app/build/neutron_query_relayer /bin/
 RUN mkdir /coordinator
-COPY --from=builder /app/coordinator /coordinator/
-WORKDIR /coordinator
-RUN yarn
+# COPY --from=builder /app/coordinator /coordinator/
+# WORKDIR /coordinator
+# RUN yarn
 
-ENTRYPOINT ["yarn", "dev"]
+ENTRYPOINT ["/bin/sh"]
