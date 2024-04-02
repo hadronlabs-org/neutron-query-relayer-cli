@@ -29,6 +29,7 @@ build
 storage
 
 .env
+coordinator/.env
 
 /data
 coordinator/node_modules/

@@ -3,8 +3,7 @@ import { GasPrice } from '@cosmjs/stargate';
 
 export class Config {
   coordinator: {
-    neutronMnemonic: string;
-    targetMnemonic: string;
+    mnemonic: string;
     factoryContractAddress: string;
     icqRunCmd: string;
   };
@@ -29,8 +28,7 @@ export class Config {
 
   load() {
     this.coordinator = {
-      neutronMnemonic: process.env.COORDINATOR_NEUTRON_MNEMONIC,
-      targetMnemonic: process.env.COORDINATOR_TARGET_MNEMONIC,
+      mnemonic: process.env.COORDINATOR_MNEMONIC,
       factoryContractAddress: process.env.FACTORY_CONTRACT_ADDRESS,
       icqRunCmd: process.env.ICQ_RUN_COMMAND,
     };

@@ -4,11 +4,11 @@ import { Client as NeutronClient } from '@neutron-org/client-ts';
 import { SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate';
 import { Tendermint34Client } from '@cosmjs/tendermint-rpc';
 import { BankExtension, QueryClient, StakingExtension } from '@cosmjs/stargate';
-import { State } from '../generated/contractLib/dropFactory';
+import { FactoryContractHandler } from '../factoryContract';
 
 export type Context = {
   config: Config;
-  factoryState: State;
+  factoryContractHandler: FactoryContractHandler;
   neutronWallet: DirectSecp256k1HdWallet;
   neutronWalletAddress: string;
   targetWallet: DirectSecp256k1HdWallet;

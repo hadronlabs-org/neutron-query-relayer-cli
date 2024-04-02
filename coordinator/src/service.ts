@@ -16,7 +16,8 @@ import { Context } from './types/Context';
 import pino from 'pino';
 import { CoreModule } from './modules/core';
 import { DropFactory } from './generated/contractLib';
-import { exec } from 'child_process';
+import { FactoryContractHandler } from './factoryContract';
+import { ValidatorsStatsModule } from './modules/validators-stats';
 
 export type Uint128 = string;
 
@@ -43,13 +44,13 @@ class Service {
   async init() {
     const config = new Config(this.log);
     const neutronWallet = await DirectSecp256k1HdWallet.fromMnemonic(
-      config.coordinator.neutronMnemonic,
+      config.coordinator.mnemonic,
       {
         prefix: 'neutron',
       },
     );
     const targetWallet = await DirectSecp256k1HdWallet.fromMnemonic(
-      config.coordinator.targetMnemonic,
+      config.coordinator.mnemonic,
       {
         prefix: config.target.accountPrefix,
       },
@@ -66,7 +67,8 @@ class Service {
         gasPrice: config.neutron.gasPrice,
       },
     );
-    const factoryState = await this.fetchFactoryState(
+
+    const factoryContractHandler = new FactoryContractHandler(
       neutronSigningClient,
       config.coordinator.factoryContractAddress,
     );
@@ -74,7 +76,7 @@ class Service {
     this.context = {
       config: config,
       neutronWallet,
-      factoryState,
+      factoryContractHandler,
       neutronWalletAddress: (await neutronWallet.getAccounts())[0].address,
       targetWallet,
       targetWalletAddress: (await targetWallet.getAccounts())[0].address,
@@ -105,11 +107,17 @@ class Service {
     };
   }
 
-  registerModules() {
+  async registerModules() {
     this.modulesList.push(
       // new PumpModule(this.context, logger.child({ context: 'PumpModule' })),
-      new CoreModule(this.context, logger.child({ context: 'CoreModule' })),
+      // new CoreModule(this.context, logger.child({ context: 'CoreModule' })),
+      new ValidatorsStatsModule(
+        this.context,
+        logger.child({ context: 'ValidatorsStatsModule' }),
+      ),
     );
+
+    await this.context.factoryContractHandler.connect(this.modulesList);
   }
 
   start() {
@@ -129,18 +137,13 @@ class Service {
 
   async performWork() {
     console.log('Performing work...');
-    exec(
-      `${this.context.config.coordinator.icqRunCmd} -q 1`,
-      (error, stdout, stderr) => {
-        if (error) {
-          console.error(`exec error: ${error}`);
-          return;
-        }
-        console.log(`stdout: ${stdout}`);
-        console.error(`stderr: ${stderr}`);
-      },
-    );
     await this.showStats();
+    if (
+      !this.context.factoryContractHandler.skip &&
+      !this.context.factoryContractHandler.connected
+    ) {
+      this.context.factoryContractHandler.connect(this.modulesList);
+    }
     for (const module of this.modulesList) {
       await module.run();
     }
@@ -161,7 +164,7 @@ class Service {
 async function main() {
   const service = new Service();
   await service.init();
-  service.registerModules();
+  await service.registerModules();
   // await sleep(5_000);
   service.start();
 }

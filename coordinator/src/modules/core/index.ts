@@ -13,13 +13,7 @@ export class CoreModule implements ManagerModule {
   constructor(
     private context: Context,
     private log: pino.Logger,
-  ) {
-    this.prepareConfig();
-    this.contractClient = new DropCore.Client(
-      this.context.neutronSigningClient,
-      this.config.contractAddress,
-    );
-  }
+  ) {}
 
   private _config: CoreConfig;
   get config(): CoreConfig {
@@ -27,6 +21,10 @@ export class CoreModule implements ManagerModule {
   }
 
   async run(): Promise<void> {
+    if (!this.context.factoryContractHandler.connected) {
+      return;
+    }
+
     let contractState: ContractState;
     let transferAck: boolean;
     try {
@@ -44,9 +42,20 @@ export class CoreModule implements ManagerModule {
 
   prepareConfig(): CoreConfig {
     this._config = {
-      contractAddress: this.context.factoryState.core_contract,
+      contractAddress:
+        this.context.factoryContractHandler.factoryState.core_contract,
     };
 
     return this.config;
+  }
+
+  onFactoryConnected(): Promise<void> {
+    this.prepareConfig();
+    this.contractClient = new DropCore.Client(
+      this.context.neutronSigningClient,
+      this.config.contractAddress,
+    );
+
+    return Promise.resolve();
   }
 }
