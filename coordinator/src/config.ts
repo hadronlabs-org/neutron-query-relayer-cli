@@ -32,7 +32,7 @@ export class Config {
       mnemonic: process.env.COORDINATOR_MNEMONIC,
       factoryContractAddress: process.env.FACTORY_CONTRACT_ADDRESS,
       icqRunCmd: process.env.ICQ_RUN_COMMAND,
-      checksPeriod: parseInt(process.env.CHECKS_PERIOD, 10),
+      checksPeriod: parseInt(process.env.COORDINATOR_CHECKS_PERIOD, 10),
     };
 
     this.neutron = {
