@@ -72,6 +72,7 @@ class Service {
       neutronSigningClient,
       config.coordinator.factoryContractAddress,
     );
+    await factoryContractHandler.connect();
 
     this.context = {
       config: config,
@@ -107,7 +108,7 @@ class Service {
     };
   }
 
-  async registerModules() {
+  registerModules() {
     this.modulesList.push(
       // new PumpModule(this.context, logger.child({ context: 'PumpModule' })),
       // new CoreModule(this.context, logger.child({ context: 'CoreModule' })),
@@ -116,8 +117,6 @@ class Service {
         logger.child({ context: 'ValidatorsStatsModule' }),
       ),
     );
-
-    await this.context.factoryContractHandler.connect(this.modulesList);
   }
 
   start() {
@@ -139,32 +138,33 @@ class Service {
     console.log('Performing work...');
     await this.showStats();
     if (
-      !this.context.factoryContractHandler.skip &&
-      !this.context.factoryContractHandler.connected
+      this.context.factoryContractHandler.skip ||
+      this.context.factoryContractHandler.connected
     ) {
-      this.context.factoryContractHandler.connect(this.modulesList);
+      for (const module of this.modulesList) {
+        await module.run();
+      }
+    } else {
+      this.log.info('Factory contract not connected, skipping work');
+      await this.context.factoryContractHandler.reconnect();
     }
-    for (const module of this.modulesList) {
-      await module.run();
-    }
-  }
 
-  private async fetchFactoryState(
-    client: SigningCosmWasmClient,
-    factoryContractAddress: string,
-  ) {
-    const factoryContractClient = new DropFactory.Client(
-      client,
-      factoryContractAddress,
-    );
-    return await factoryContractClient.queryState();
+    // if (
+    //   !this.context.factoryContractHandler.skip &&
+    //   !this.context.factoryContractHandler.connected
+    // ) {
+    //   this.context.factoryContractHandler.connect(this.modulesList);
+    // }
+    // for (const module of this.modulesList) {
+    //   await module.run();
+    // }
   }
 }
 
 async function main() {
   const service = new Service();
   await service.init();
-  await service.registerModules();
+  service.registerModules();
   // await sleep(5_000);
   service.start();
 }

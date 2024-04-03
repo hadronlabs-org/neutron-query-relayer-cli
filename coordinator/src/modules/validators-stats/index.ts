@@ -3,7 +3,6 @@ import { DropValidatorsStats } from '../../generated/contractLib';
 import { ValidatorsStatsConfig } from './types/config';
 import { Context } from '../../types/Context';
 import pino from 'pino';
-import { env } from 'process';
 import { QueryIds } from '../../generated/contractLib/dropValidatorsStats';
 import { runQueryRelayer } from '../../utils';
 
@@ -17,7 +16,7 @@ export class ValidatorsStatsModule implements ManagerModule {
     private log: pino.Logger,
   ) {
     this.prepareConfig();
-    this.contractClient = new DropValidatorsStats.Client(
+    this.contractClient = new ValidatorsStatsContractClient(
       this.context.neutronSigningClient,
       this.config.contractAddress,
     );
@@ -46,7 +45,7 @@ export class ValidatorsStatsModule implements ManagerModule {
 
   prepareConfig(): ValidatorsStatsConfig {
     this._config = {
-      contractAddress: env.VALIDATOR_STATS_CONTRACT_ADDRESS,
+      contractAddress: process.env.VALIDATOR_STATS_CONTRACT_ADDRESS,
     };
 
     return this.config;

@@ -20,9 +20,23 @@ export class CoreModule implements ManagerModule {
     return this._config;
   }
 
+  init() {
+    this._config = {
+      contractAddress: process.env.CORE_CONTRACT_ADDRESS
+        ? process.env.CORE_CONTRACT_ADDRESS
+        : this.context.factoryContractHandler.factoryState.core_contract,
+    };
+
+    this.contractClient = new DropCore.Client(
+      this.context.neutronSigningClient,
+      this.config.contractAddress,
+    );
+    return this.config;
+  }
+
   async run(): Promise<void> {
-    if (!this.context.factoryContractHandler.connected) {
-      return;
+    if (!this.contractClient) {
+      this.init();
     }
 
     let contractState: ContractState;
@@ -38,24 +52,5 @@ export class CoreModule implements ManagerModule {
     this.log.info(
       `Core contract state: ${contractState}, transfer ACK received: ${transferAck}`,
     );
-  }
-
-  prepareConfig(): CoreConfig {
-    this._config = {
-      contractAddress:
-        this.context.factoryContractHandler.factoryState.core_contract,
-    };
-
-    return this.config;
-  }
-
-  onFactoryConnected(): Promise<void> {
-    this.prepareConfig();
-    this.contractClient = new DropCore.Client(
-      this.context.neutronSigningClient,
-      this.config.contractAddress,
-    );
-
-    return Promise.resolve();
   }
 }
