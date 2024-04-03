@@ -26,6 +26,9 @@ class Client {
     queryHandlers = async () => {
         return this.client.queryContractSmart(this.contractAddress, { handlers: {} });
     };
+    queryPauseInfo = async () => {
+        return this.client.queryContractSmart(this.contractAddress, { pause_info: {} });
+    };
     updateConfig = async (sender, args, fee, memo, funds) => {
         if (!isSigningCosmWasmClient(this.client)) {
             throw this.mustBeSigningClient();
@@ -49,6 +52,18 @@ class Client {
             throw this.mustBeSigningClient();
         }
         return this.client.execute(sender, this.contractAddress, { exchange_rewards: {} }, fee || "auto", memo, funds);
+    };
+    pause = async (sender, fee, memo, funds) => {
+        if (!isSigningCosmWasmClient(this.client)) {
+            throw this.mustBeSigningClient();
+        }
+        return this.client.execute(sender, this.contractAddress, { pause: {} }, fee || "auto", memo, funds);
+    };
+    unpause = async (sender, fee, memo, funds) => {
+        if (!isSigningCosmWasmClient(this.client)) {
+            throw this.mustBeSigningClient();
+        }
+        return this.client.execute(sender, this.contractAddress, { unpause: {} }, fee || "auto", memo, funds);
     };
 }
 exports.Client = Client;

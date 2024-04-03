@@ -7,9 +7,6 @@ export function runQueryRelayer(
   log: pino.Logger,
   queryIds: string[],
 ) {
-  console.log('runQueryRelayer');
-  console.log(queryIds);
-  console.log(queryIds.join(' -q '));
   try {
     const stdout = execSync(
       `${context.config.coordinator.icqRunCmd} -q ${queryIds.join(' -q ')}`,

@@ -49,7 +49,6 @@ export class FactoryContractHandler {
   }
 
   async reconnect() {
-    console.log(`Factory adddress: ${this.factoryContractAddress}`);
     try {
       this._factoryState = await this.contractClient.queryState();
       this._connected = true;

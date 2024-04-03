@@ -50,6 +50,12 @@ class Client {
     queryTotalBonded = async () => {
         return this.client.queryContractSmart(this.contractAddress, { total_bonded: {} });
     };
+    queryTransferAckReceived = async () => {
+        return this.client.queryContractSmart(this.contractAddress, { transfer_ack_received: {} });
+    };
+    queryPauseInfo = async () => {
+        return this.client.queryContractSmart(this.contractAddress, { pause_info: {} });
+    };
     bond = async (sender, args, fee, memo, funds) => {
         if (!isSigningCosmWasmClient(this.client)) {
             throw this.mustBeSigningClient();
@@ -91,6 +97,18 @@ class Client {
             throw this.mustBeSigningClient();
         }
         return this.client.execute(sender, this.contractAddress, { reset_bonded_amount: {} }, fee || "auto", memo, funds);
+    };
+    pause = async (sender, fee, memo, funds) => {
+        if (!isSigningCosmWasmClient(this.client)) {
+            throw this.mustBeSigningClient();
+        }
+        return this.client.execute(sender, this.contractAddress, { pause: {} }, fee || "auto", memo, funds);
+    };
+    unpause = async (sender, fee, memo, funds) => {
+        if (!isSigningCosmWasmClient(this.client)) {
+            throw this.mustBeSigningClient();
+        }
+        return this.client.execute(sender, this.contractAddress, { unpause: {} }, fee || "auto", memo, funds);
     };
     updateOwnership = async (sender, args, fee, memo, funds) => {
         if (!isSigningCosmWasmClient(this.client)) {

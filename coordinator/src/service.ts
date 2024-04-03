@@ -15,7 +15,6 @@ import { Config } from './config';
 import { Context } from './types/Context';
 import pino from 'pino';
 import { CoreModule } from './modules/core';
-import { DropFactory } from './generated/contractLib';
 import { FactoryContractHandler } from './factoryContract';
 import { ValidatorsStatsModule } from './modules/validators-stats';
 
@@ -120,7 +119,10 @@ class Service {
   }
 
   start() {
-    this.workHandler = setInterval(() => this.performWork(), 5 * 1000);
+    this.workHandler = setInterval(
+      () => this.performWork(),
+      this.context.config.coordinator.checksPeriod * 1000,
+    );
   }
 
   async showStats() {
@@ -135,7 +137,6 @@ class Service {
   }
 
   async performWork() {
-    console.log('Performing work...');
     await this.showStats();
     if (
       this.context.factoryContractHandler.skip ||
@@ -148,16 +149,6 @@ class Service {
       this.log.info('Factory contract not connected, skipping work');
       await this.context.factoryContractHandler.reconnect();
     }
-
-    // if (
-    //   !this.context.factoryContractHandler.skip &&
-    //   !this.context.factoryContractHandler.connected
-    // ) {
-    //   this.context.factoryContractHandler.connect(this.modulesList);
-    // }
-    // for (const module of this.modulesList) {
-    //   await module.run();
-    // }
   }
 }
 
@@ -165,7 +156,6 @@ async function main() {
   const service = new Service();
   await service.init();
   service.registerModules();
-  // await sleep(5_000);
   service.start();
 }
 

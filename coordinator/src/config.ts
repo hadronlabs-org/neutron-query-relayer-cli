@@ -6,6 +6,7 @@ export class Config {
     mnemonic: string;
     factoryContractAddress: string;
     icqRunCmd: string;
+    checksPeriod: number;
   };
   neutron: {
     rpc: string;
@@ -31,6 +32,7 @@ export class Config {
       mnemonic: process.env.COORDINATOR_MNEMONIC,
       factoryContractAddress: process.env.FACTORY_CONTRACT_ADDRESS,
       icqRunCmd: process.env.ICQ_RUN_COMMAND,
+      checksPeriod: parseInt(process.env.CHECKS_PERIOD, 10),
     };
 
     this.neutron = {

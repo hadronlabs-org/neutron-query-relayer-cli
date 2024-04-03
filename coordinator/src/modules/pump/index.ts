@@ -22,7 +22,6 @@ export class PumpModule implements ManagerModule {
     );
 
     this.contractClient.queryIca().then((result) => {
-      console.log('ICA address query:');
       if ((result as any).registered.ica_address) {
         this.icaAddress = (result as any).registered.ica_address;
         this.log.info(`Pump ICA address: ${this.icaAddress}`);
