@@ -3,7 +3,6 @@ import { DropValidatorsStats } from '../../generated/contractLib';
 import { ValidatorsStatsConfig } from './types/config';
 import { Context } from '../../types/Context';
 import pino from 'pino';
-import { QueryIds } from '../../generated/contractLib/dropValidatorsStats';
 import { runQueryRelayer } from '../../utils';
 
 const ValidatorsStatsContractClient = DropValidatorsStats.Client;
@@ -16,6 +15,7 @@ export class ValidatorsStatsModule implements ManagerModule {
     private log: pino.Logger,
   ) {
     this.prepareConfig();
+
     this.contractClient = new ValidatorsStatsContractClient(
       this.context.neutronSigningClient,
       this.config.contractAddress,
@@ -28,13 +28,7 @@ export class ValidatorsStatsModule implements ManagerModule {
   }
 
   async run(): Promise<void> {
-    let queryIds: QueryIds;
-    try {
-      queryIds = await this.contractClient.queryQueryIds();
-    } catch (error) {
-      this.log.error(`Error querying contract query ids: ${error.message}`);
-      return;
-    }
+    const queryIds = await this.contractClient.queryQueryIds();
 
     this.log.info(`Validator stats query ids: ${JSON.stringify(queryIds)}`);
 
@@ -45,15 +39,18 @@ export class ValidatorsStatsModule implements ManagerModule {
     }
   }
 
-  prepareConfig(): ValidatorsStatsConfig {
+  prepareConfig(): void {
     this._config = {
       contractAddress: process.env.VALIDATOR_STATS_CONTRACT_ADDRESS,
     };
-
-    return this.config;
   }
 
-  onFactoryConnected(): Promise<void> {
-    return Promise.resolve();
+  static verifyConfig(log: pino.Logger): boolean {
+    if (!process.env.VALIDATOR_STATS_CONTRACT_ADDRESS) {
+      log.error('VALIDATOR_STATS_CONTRACT_ADDRESS is not provided');
+      return false;
+    }
+
+    return true;
   }
 }

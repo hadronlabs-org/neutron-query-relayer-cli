@@ -108,14 +108,25 @@ class Service {
   }
 
   registerModules() {
-    this.modulesList.push(
-      // new PumpModule(this.context, logger.child({ context: 'PumpModule' })),
-      // new CoreModule(this.context, logger.child({ context: 'CoreModule' })),
-      new ValidatorsStatsModule(
-        this.context,
-        logger.child({ context: 'ValidatorsStatsModule' }),
-      ),
-    );
+    // this.modulesList.push(
+    //   new PumpModule(this.context, logger.child({ context: 'PumpModule' })),
+    //   // new CoreModule(this.context, logger.child({ context: 'CoreModule' })),
+    // );
+
+    if (PumpModule.verifyConfig(this.log)) {
+      this.modulesList.push(
+        new PumpModule(this.context, logger.child({ context: 'PumpModule' })),
+      );
+    }
+
+    if (ValidatorsStatsModule.verifyConfig(this.log)) {
+      this.modulesList.push(
+        new ValidatorsStatsModule(
+          this.context,
+          logger.child({ context: 'ValidatorsStatsModule' }),
+        ),
+      );
+    }
   }
 
   start() {
@@ -143,7 +154,13 @@ class Service {
       this.context.factoryContractHandler.connected
     ) {
       for (const module of this.modulesList) {
-        await module.run();
+        try {
+          await module.run();
+        } catch (error) {
+          this.log.error(
+            `Error running module ${module.constructor.name}: ${error.message}`,
+          );
+        }
       }
     } else {
       this.log.info('Factory contract not connected, skipping work');
