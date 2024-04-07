@@ -8,6 +8,7 @@ import { FactoryContractHandler } from '../factoryContract';
 
 export type Context = {
   config: Config;
+  height: number;
   factoryContractHandler: FactoryContractHandler;
   neutronWallet: DirectSecp256k1HdWallet;
   neutronWalletAddress: string;

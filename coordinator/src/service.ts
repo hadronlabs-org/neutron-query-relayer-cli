@@ -17,6 +17,7 @@ import pino from 'pino';
 import { CoreModule } from './modules/core';
 import { FactoryContractHandler } from './factoryContract';
 import { ValidatorsStatsModule } from './modules/validators-stats';
+import { PuppeteerModule } from './modules/puppeteer';
 
 export type Uint128 = string;
 
@@ -76,6 +77,7 @@ class Service {
     this.context = {
       config: config,
       neutronWallet,
+      height: 0,
       factoryContractHandler,
       neutronWalletAddress: (await neutronWallet.getAccounts())[0].address,
       targetWallet,
@@ -119,6 +121,20 @@ class Service {
       );
     }
 
+    if (
+      PuppeteerModule.verifyConfig(
+        this.log,
+        this.context.factoryContractHandler.skip,
+      )
+    ) {
+      this.modulesList.push(
+        new PuppeteerModule(
+          this.context,
+          logger.child({ context: 'PuppeteerModule' }),
+        ),
+      );
+    }
+
     if (ValidatorsStatsModule.verifyConfig(this.log)) {
       this.modulesList.push(
         new ValidatorsStatsModule(
@@ -141,9 +157,12 @@ class Service {
       this.context.neutronWalletAddress,
       'untrn',
     );
+    this.context.height = (
+      await this.context.neutronTmClient.block()
+    ).block.header.height;
 
     this.log.info(
-      `Coordinator address state: ${balance.amount}${balance.denom}`,
+      `Coordinator address state: ${balance.amount}${balance.denom}, height: ${this.context.height}`,
     );
   }
 

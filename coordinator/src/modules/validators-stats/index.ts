@@ -34,7 +34,7 @@ export class ValidatorsStatsModule implements ManagerModule {
 
     const queryIdsArray = Object.values(queryIds).filter((id) => !!id);
 
-    if (queryIdsArray.length >= 0) {
+    if (queryIdsArray.length > 0) {
       runQueryRelayer(this.context, this.log, queryIdsArray);
     }
   }
