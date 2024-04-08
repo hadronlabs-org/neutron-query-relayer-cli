@@ -24,7 +24,7 @@
   "devDependencies": {
     "@types/node": "^20.11.27",
     "@typescript-eslint/eslint-plugin": "^6.4.0",
-    "@neutron-org/contracts2ts": "^1.4.0",
+    "@neutron-org/contracts2ts": "^1.4.2",
     "eslint": "^8.0.1",
     "eslint-config-prettier": "^9.1.0",
     "eslint-config-standard-with-typescript": "^43.0.1",

@@ -18,7 +18,7 @@ export type IcaState =
         ica_address: string;
       };
     };
-export type ArrayOfTupleOfUint64And_String = [number, string][];
+export type ArrayOfTupleOfUint64AndString = [number, string][];
 export type Transaction =
   | {
       delegate: {
@@ -134,7 +134,7 @@ export interface DropPuppeteerSchema {
     | ConfigResponse
     | Binary
     | IcaState
-    | ArrayOfTupleOfUint64And_String
+    | ArrayOfTupleOfUint64AndString
     | ArrayOfTransaction;
   query: ExtentionArgs;
   execute:
@@ -296,22 +296,50 @@ export class Client {
     });
     return res;
   }
-  queryConfig = async (): Promise<ConfigResponse> =>
-    this.client.queryContractSmart(this.contractAddress, { config: {} });
-  queryIca = async (): Promise<IcaState> =>
-    this.client.queryContractSmart(this.contractAddress, { ica: {} });
-  queryTransactions = async (): Promise<ArrayOfTransaction> =>
-    this.client.queryContractSmart(this.contractAddress, {
+  static async instantiate2(
+    client: SigningCosmWasmClient,
+    sender: string,
+    codeId: number,
+    salt: number,
+    initMsg: InstantiateMsg,
+    label: string,
+    fees: StdFee | 'auto' | number,
+    initCoins?: readonly Coin[],
+  ): Promise<InstantiateResult> {
+    const res = await client.instantiate2(
+      sender,
+      codeId,
+      new Uint8Array([salt]),
+      initMsg,
+      label,
+      fees,
+      {
+        ...(initCoins && initCoins.length && { funds: initCoins }),
+      },
+    );
+    return res;
+  }
+  queryConfig = async (): Promise<ConfigResponse> => {
+    return this.client.queryContractSmart(this.contractAddress, { config: {} });
+  };
+  queryIca = async (): Promise<IcaState> => {
+    return this.client.queryContractSmart(this.contractAddress, { ica: {} });
+  };
+  queryTransactions = async (): Promise<ArrayOfTransaction> => {
+    return this.client.queryContractSmart(this.contractAddress, {
       transactions: {},
     });
-  queryKVQueryIds = async (): Promise<ArrayOfTupleOfUint64And_String> =>
-    this.client.queryContractSmart(this.contractAddress, {
+  };
+  queryKVQueryIds = async (): Promise<ArrayOfTupleOfUint64AndString> => {
+    return this.client.queryContractSmart(this.contractAddress, {
       k_v_query_ids: {},
     });
-  queryExtention = async (args: ExtentionArgs): Promise<Binary> =>
-    this.client.queryContractSmart(this.contractAddress, {
+  };
+  queryExtention = async (args: ExtentionArgs): Promise<Binary> => {
+    return this.client.queryContractSmart(this.contractAddress, {
       extention: args,
     });
+  };
   registerICA = async (
     sender: string,
     fee?: number | StdFee | 'auto',
