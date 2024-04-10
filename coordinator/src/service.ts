@@ -110,11 +110,6 @@ class Service {
   }
 
   registerModules() {
-    // this.modulesList.push(
-    //   new PumpModule(this.context, logger.child({ context: 'PumpModule' })),
-    //   // new CoreModule(this.context, logger.child({ context: 'CoreModule' })),
-    // );
-
     if (PumpModule.verifyConfig(this.log)) {
       this.modulesList.push(
         new PumpModule(this.context, logger.child({ context: 'PumpModule' })),

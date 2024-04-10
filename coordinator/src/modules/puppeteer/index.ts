@@ -60,7 +60,7 @@ export class PuppeteerModule implements ManagerModule {
   }
 
   static verifyConfig(log: pino.Logger, skipFactory: boolean): boolean {
-    if (!skipFactory && !process.env.PUPPETEER_CONTRACT_ADDRESS) {
+    if (skipFactory && !process.env.PUPPETEER_CONTRACT_ADDRESS) {
       log.error('PUPPETEER_CONTRACT_ADDRESS is not provided');
       return false;
     }
