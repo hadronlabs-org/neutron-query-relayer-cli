@@ -1,56 +1,109 @@
 import { ManagerModule } from '../../types/Module';
-import { DropCore } from '../../generated/contractLib';
-import { CoreConfig } from './types/config';
+import { DropPuppeteer, DropCore } from '../../generated/contractLib';
+import { PuppeteerConfig } from './types/config';
 import { Context } from '../../types/Context';
 import pino from 'pino';
-import { ContractState } from '../../generated/contractLib/dropCore';
+import { runQueryRelayer } from '../../utils';
 
+const PuppeteerContractClient = DropPuppeteer.Client;
 const CoreContractClient = DropCore.Client;
 
 export class CoreModule implements ManagerModule {
-  contractClient?: InstanceType<typeof CoreContractClient>;
+  private puppeteerContractClient?: InstanceType<
+    typeof PuppeteerContractClient
+  >;
+  private coreContractClient?: InstanceType<typeof CoreContractClient>;
 
   constructor(
     private context: Context,
     private log: pino.Logger,
   ) {}
 
-  private _config: CoreConfig;
-  get config(): CoreConfig {
+  private _config: PuppeteerConfig;
+  get config(): PuppeteerConfig {
     return this._config;
   }
 
   init() {
-    this._config = {
-      contractAddress: process.env.CORE_CONTRACT_ADDRESS
-        ? process.env.CORE_CONTRACT_ADDRESS
-        : this.context.factoryContractHandler.factoryState.core_contract,
-    };
+    this.prepareConfig();
 
-    this.contractClient = new DropCore.Client(
-      this.context.neutronSigningClient,
-      this.config.contractAddress,
-    );
-    return this.config;
+    if (this.config.puppeteerContractAddress) {
+      this.puppeteerContractClient = new PuppeteerContractClient(
+        this.context.neutronSigningClient,
+        this.config.puppeteerContractAddress,
+      );
+    }
+
+    if (this.config.coreContractAddress) {
+      this.coreContractClient = new CoreContractClient(
+        this.context.neutronSigningClient,
+        this.config.coreContractAddress,
+      );
+    }
   }
 
   async run(): Promise<void> {
-    if (!this.contractClient) {
+    if (!this.puppeteerContractClient || !this.coreContractClient) {
       this.init();
     }
 
-    let contractState: ContractState;
-    let transferAck: boolean;
-    try {
-      contractState = await this.contractClient.queryContractState();
-      transferAck = await this.contractClient.queryTransferAckReceived();
-    } catch (error) {
-      this.log.error(`Error querying contract state: ${error.message}`);
-      return;
+    const coreContractState =
+      await this.coreContractClient.queryContractState();
+    const puppteteerResponseReceived =
+      await this.coreContractClient.queryPuppeteerResponseReceived();
+
+    this.log.debug(
+      `Core contract state: ${coreContractState}, response received: ${puppteteerResponseReceived}`,
+    );
+
+    if (coreContractState === 'transfering' && puppteteerResponseReceived) {
+      this.log.debug(`Protocol is transfering state and response received`);
+
+      const queryIds = await this.puppeteerContractClient.queryKVQueryIds();
+
+      this.log.info(`Puppeteer query ids: ${JSON.stringify(queryIds)}`);
+
+      const queryIdsArray = queryIds.map(([queryId]) => queryId.toString());
+
+      this.log.info(
+        `Puppeteer query ids plain: ${JSON.stringify(queryIdsArray)}`,
+      );
+
+      if (queryIdsArray.length > 0) {
+        runQueryRelayer(this.context, this.log, queryIdsArray);
+      }
+
+      await this.coreContractClient.tick(
+        this.context.neutronWalletAddress,
+        1.5,
+        undefined,
+        [],
+      );
+    }
+  }
+
+  prepareConfig(): void {
+    this._config = {
+      puppeteerContractAddress:
+        process.env.PUPPETEER_CONTRACT_ADDRESS ||
+        this.context.factoryContractHandler.factoryState.puppeteer_contract,
+      coreContractAddress:
+        process.env.CORE_CONTRACT_ADDRESS ||
+        this.context.factoryContractHandler.factoryState.core_contract,
+    };
+  }
+
+  static verifyConfig(log: pino.Logger, skipFactory: boolean): boolean {
+    if (skipFactory && !process.env.PUPPETEER_CONTRACT_ADDRESS) {
+      log.error('PUPPETEER_CONTRACT_ADDRESS is not provided');
+      return false;
     }
 
-    this.log.info(
-      `Core contract state: ${contractState}, transfer ACK received: ${transferAck}`,
-    );
+    if (skipFactory && !process.env.CORE_CONTRACT_ADDRESS) {
+      log.error('CORE_CONTRACT_ADDRESS is not provided');
+      return false;
+    }
+
+    return true;
   }
 }

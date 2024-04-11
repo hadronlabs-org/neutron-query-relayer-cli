@@ -14,10 +14,9 @@ import { logger } from './logger';
 import { Config } from './config';
 import { Context } from './types/Context';
 import pino from 'pino';
-import { CoreModule } from './modules/core';
 import { FactoryContractHandler } from './factoryContract';
 import { ValidatorsStatsModule } from './modules/validators-stats';
-import { PuppeteerModule } from './modules/puppeteer';
+import { CoreModule } from './modules/core';
 
 export type Uint128 = string;
 
@@ -117,16 +116,13 @@ class Service {
     }
 
     if (
-      PuppeteerModule.verifyConfig(
+      CoreModule.verifyConfig(
         this.log,
         this.context.factoryContractHandler.skip,
       )
     ) {
       this.modulesList.push(
-        new PuppeteerModule(
-          this.context,
-          logger.child({ context: 'PuppeteerModule' }),
-        ),
+        new CoreModule(this.context, logger.child({ context: 'CoreModule' })),
       );
     }
 

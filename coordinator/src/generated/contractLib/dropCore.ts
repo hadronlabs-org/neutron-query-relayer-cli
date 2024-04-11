@@ -150,6 +150,7 @@ export type PauseInfoResponse =
       unpaused: {};
     };
 export type ArrayOfTupleOfStringAndTupleOfStringAndUint1281 = [string, [string, Uint128]][];
+export type Boolean = boolean;
 /**
  * A thin wrapper around u128 that is using strings for JSON encoding/decoding, such that the full u128 range can be used for clients that convert JSON numbers to floats, like JavaScript and jq.
  *
@@ -164,7 +165,6 @@ export type ArrayOfTupleOfStringAndTupleOfStringAndUint1281 = [string, [string, 
  * let c = Uint128::from(70u32); assert_eq!(c.u128(), 70); ```
  */
 export type Uint1281 = string;
-export type Boolean = boolean;
 export type UnbondBatchStatus =
   | "new"
   | "unbond_requested"
@@ -242,8 +242,8 @@ export interface DropCoreSchema {
     | String
     | PauseInfoResponse
     | ArrayOfTupleOfStringAndTupleOfStringAndUint1281
-    | Uint1281
     | Boolean
+    | Uint1281
     | UnbondBatch;
   query: UnbondBatchArgs;
   execute: BondArgs | UpdateConfigArgs | UpdateNonNativeRewardsReceiversArgs | PuppeteerHookArgs | UpdateOwnershipArgs;
@@ -506,8 +506,8 @@ export class Client {
   queryTotalBonded = async(): Promise<Uint128> => {
     return this.client.queryContractSmart(this.contractAddress, { total_bonded: {} });
   }
-  queryTransferAckReceived = async(): Promise<Boolean> => {
-    return this.client.queryContractSmart(this.contractAddress, { transfer_ack_received: {} });
+  queryPuppeteerResponseReceived = async(): Promise<Boolean> => {
+    return this.client.queryContractSmart(this.contractAddress, { puppeteer_response_received: {} });
   }
   queryPauseInfo = async(): Promise<PauseInfoResponse> => {
     return this.client.queryContractSmart(this.contractAddress, { pause_info: {} });

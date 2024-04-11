@@ -1,6 +1,6 @@
 import { ManagerModule } from '../../types/Module';
 import { DropPump } from '../../generated/contractLib';
-import { PumpConfig } from './types/pump-config';
+import { PumpConfig } from './types/config';
 import { Context } from '../../types/Context';
 import { Uint64 } from '@cosmjs/math';
 import pino from 'pino';
@@ -48,7 +48,7 @@ export class PumpModule implements ManagerModule {
 
     if (balanceAmount > this.config.minBalance) {
       this.log.info('Pushing coins to Neutron wallet...');
-      this.contractClient.push(
+      await this.contractClient.push(
         this.context.neutronWalletAddress,
         {
           coins: [

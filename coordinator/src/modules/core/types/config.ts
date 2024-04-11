@@ -1,3 +1,4 @@
-export type CoreConfig = {
-  contractAddress: string;
+export type PuppeteerConfig = {
+  puppeteerContractAddress: string;
+  coreContractAddress: string;
 };
