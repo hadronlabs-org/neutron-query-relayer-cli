@@ -47,7 +47,7 @@ export class PumpModule implements ManagerModule {
     const balanceAmount = Uint64.fromString(balance.amount);
 
     if (balanceAmount > this.config.minBalance) {
-      this.log.info('Pushing coins to Neutron wallet...');
+      this.log.info(`Pushing ${balanceAmount} coins to Neutron wallet...`);
       await this.contractClient.push(
         this.context.neutronWalletAddress,
         {

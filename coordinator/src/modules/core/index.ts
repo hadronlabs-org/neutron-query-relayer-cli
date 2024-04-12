@@ -3,7 +3,7 @@ import { DropPuppeteer, DropCore } from '../../generated/contractLib';
 import { PuppeteerConfig } from './types/config';
 import { Context } from '../../types/Context';
 import pino from 'pino';
-import { runQueryRelayer } from '../../utils';
+import { runQueryRelayer, waitBlocks } from '../../utils';
 
 const PuppeteerContractClient = DropPuppeteer.Client;
 const CoreContractClient = DropCore.Client;
@@ -49,14 +49,14 @@ export class CoreModule implements ManagerModule {
 
     const coreContractState =
       await this.coreContractClient.queryContractState();
-    const puppteteerResponseReceived =
-      await this.coreContractClient.queryPuppeteerResponseReceived();
+    const puppeteerResponseReceived =
+      !!(await this.coreContractClient.queryLastPuppeteerResponse());
 
     this.log.debug(
-      `Core contract state: ${coreContractState}, response received: ${puppteteerResponseReceived}`,
+      `Core contract state: ${coreContractState}, response received: ${puppeteerResponseReceived}`,
     );
 
-    if (coreContractState === 'transfering' && puppteteerResponseReceived) {
+    if (coreContractState === 'transfering' && puppeteerResponseReceived) {
       this.log.debug(`Protocol is transfering state and response received`);
 
       const queryIds = await this.puppeteerContractClient.queryKVQueryIds();
@@ -72,6 +72,8 @@ export class CoreModule implements ManagerModule {
       if (queryIdsArray.length > 0) {
         runQueryRelayer(this.context, this.log, queryIdsArray);
       }
+
+      await waitBlocks(this.context, 1, this.log);
 
       await this.coreContractClient.tick(
         this.context.neutronWalletAddress,
