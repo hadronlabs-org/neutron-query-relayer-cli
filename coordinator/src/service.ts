@@ -106,6 +106,8 @@ class Service {
         setupBankExtension,
       ),
     };
+
+    this.log.info(`Coordinator account address: ${this.context.neutronWalletAddress}`);
   }
 
   registerModules() {

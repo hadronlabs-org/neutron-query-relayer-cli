@@ -5,7 +5,16 @@ while ! curl -f ${NODE}:1317/cosmos/base/tendermint/v1beta1/blocks/1 >/dev/null 
   sleep 1
 done
 
-echo "Start relayer coordinator"
+if [[ "$MANUAL_MODE" == "true" ]]; then
+  while true; do
+  :
+  done
+else
+  echo "Start relayer coordinator"
 
-cd /coordinator
-yarn dev
+  cd /coordinator
+  yarn dev
+fi
+
+
+

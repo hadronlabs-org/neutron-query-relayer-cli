@@ -17,7 +17,7 @@ export class CoreModule implements ManagerModule {
   constructor(
     private context: Context,
     private log: pino.Logger,
-  ) {}
+  ) { }
 
   private _config: PuppeteerConfig;
   get config(): PuppeteerConfig {
@@ -56,8 +56,9 @@ export class CoreModule implements ManagerModule {
       `Core contract state: ${coreContractState}, response received: ${puppeteerResponseReceived}`,
     );
 
-    if (coreContractState === 'transfering' && puppeteerResponseReceived) {
-      this.log.debug(`Protocol is transfering state and response received`);
+    // coreContractState === 'transfering' && 
+    if (puppeteerResponseReceived) {
+      this.log.debug(`Response is received`);
 
       const queryIds = await this.puppeteerContractClient.queryKVQueryIds();
 
@@ -71,16 +72,16 @@ export class CoreModule implements ManagerModule {
 
       if (queryIdsArray.length > 0) {
         runQueryRelayer(this.context, this.log, queryIdsArray);
+
+        await waitBlocks(this.context, 1, this.log);
+
+        await this.coreContractClient.tick(
+          this.context.neutronWalletAddress,
+          1.5,
+          undefined,
+          [],
+        );
       }
-
-      await waitBlocks(this.context, 1, this.log);
-
-      await this.coreContractClient.tick(
-        this.context.neutronWalletAddress,
-        1.5,
-        undefined,
-        [],
-      );
     }
   }
 

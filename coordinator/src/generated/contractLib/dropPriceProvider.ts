@@ -2,22 +2,6 @@ import { CosmWasmClient, SigningCosmWasmClient, ExecuteResult, InstantiateResult
 import { StdFee } from "@cosmjs/amino";
 import { Coin } from "@cosmjs/amino";
 /**
- * A thin wrapper around u128 that is using strings for JSON encoding/decoding, such that the full u128 range can be used for clients that convert JSON numbers to floats, like JavaScript and jq.
- *
- * # Examples
- *
- * Use `from` to create instances of this and `u128` to get the value out:
- *
- * ``` # use cosmwasm_std::Uint128; let a = Uint128::from(123u128); assert_eq!(a.u128(), 123);
- *
- * let b = Uint128::from(42u64); assert_eq!(b.u128(), 42);
- *
- * let c = Uint128::from(70u32); assert_eq!(c.u128(), 70); ```
- */
-export type Uint128 = string;
-export type ArrayOfTupleOfStringAndUint128 = [string, Uint128][];
-export type ArrayOfTupleOfStringAndUint1281 = [string, Uint128][];
-/**
  * Expiration represents a point in time when some event happens. It can compare with a BlockInfo and will return is_expired() == true once the condition is hit (and for every block in the future)
  */
 export type Expiration =
@@ -55,6 +39,18 @@ export type Timestamp = Uint64;
  */
 export type Uint64 = string;
 /**
+ * A fixed-point decimal value with 18 fractional digits, i.e. Decimal(1_000_000_000_000_000_000) == 1.0
+ *
+ * The greatest possible value that can be represented is 340282366920938463463.374607431768211455 (which is (2^128 - 1) / 10^18)
+ */
+export type Decimal = string;
+/**
+ * A fixed-point decimal value with 18 fractional digits, i.e. Decimal(1_000_000_000_000_000_000) == 1.0
+ *
+ * The greatest possible value that can be represented is 340282366920938463463.374607431768211455 (which is (2^128 - 1) / 10^18)
+ */
+export type Decimal1 = string;
+/**
  * Actions that can be taken to alter the contract's ownership
  */
 export type UpdateOwnershipArgs =
@@ -67,18 +63,12 @@ export type UpdateOwnershipArgs =
   | "accept_ownership"
   | "renounce_ownership";
 
-export interface DropStrategySchema {
-  responses: ArrayOfTupleOfStringAndUint128 | ArrayOfTupleOfStringAndUint1281 | Config | OwnershipForString;
-  query: CalcDepositArgs | CalcWithdrawArgs;
-  execute: UpdateConfigArgs | UpdateOwnershipArgs;
+export interface DropPriceProviderSchema {
+  responses: OwnershipForString | Decimal;
+  query: PriceArgs;
+  execute: RemoveDenomArgs | SetPriceArgs | UpdateOwnershipArgs;
   instantiate?: InstantiateMsg;
   [k: string]: unknown;
-}
-export interface Config {
-  denom: string;
-  distribution_address: string;
-  puppeteer_address: string;
-  validator_set_address: string;
 }
 /**
  * The contract's ownership info
@@ -97,27 +87,18 @@ export interface OwnershipForString {
    */
   pending_owner?: string | null;
 }
-export interface CalcDepositArgs {
-  deposit: Uint128;
+export interface PriceArgs {
+  denom: string;
 }
-export interface CalcWithdrawArgs {
-  withdraw: Uint128;
+export interface RemoveDenomArgs {
+  denom: string;
 }
-export interface UpdateConfigArgs {
-  new_config: ConfigOptional;
-}
-export interface ConfigOptional {
-  denom?: string | null;
-  distribution_address?: string | null;
-  puppeteer_address?: string | null;
-  validator_set_address?: string | null;
+export interface SetPriceArgs {
+  denom: string;
+  price: Decimal1;
 }
 export interface InstantiateMsg {
-  denom: string;
-  distribution_address: string;
-  owner: string;
-  puppeteer_address: string;
-  validator_set_address: string;
+  owner?: string | null;
 }
 
 
@@ -166,21 +147,19 @@ export class Client {
     });
     return res;
   }
-  queryConfig = async(): Promise<Config> => {
-    return this.client.queryContractSmart(this.contractAddress, { config: {} });
-  }
-  queryCalcDeposit = async(args: CalcDepositArgs): Promise<ArrayOfTupleOfStringAndUint128> => {
-    return this.client.queryContractSmart(this.contractAddress, { calc_deposit: args });
-  }
-  queryCalcWithdraw = async(args: CalcWithdrawArgs): Promise<ArrayOfTupleOfStringAndUint128> => {
-    return this.client.queryContractSmart(this.contractAddress, { calc_withdraw: args });
+  queryPrice = async(args: PriceArgs): Promise<Decimal> => {
+    return this.client.queryContractSmart(this.contractAddress, { price: args });
   }
   queryOwnership = async(): Promise<OwnershipForString> => {
     return this.client.queryContractSmart(this.contractAddress, { ownership: {} });
   }
-  updateConfig = async(sender:string, args: UpdateConfigArgs, fee?: number | StdFee | "auto", memo?: string, funds?: Coin[]): Promise<ExecuteResult> =>  {
+  removeDenom = async(sender:string, args: RemoveDenomArgs, fee?: number | StdFee | "auto", memo?: string, funds?: Coin[]): Promise<ExecuteResult> =>  {
           if (!isSigningCosmWasmClient(this.client)) { throw this.mustBeSigningClient(); }
-    return this.client.execute(sender, this.contractAddress, { update_config: args }, fee || "auto", memo, funds);
+    return this.client.execute(sender, this.contractAddress, { remove_denom: args }, fee || "auto", memo, funds);
+  }
+  setPrice = async(sender:string, args: SetPriceArgs, fee?: number | StdFee | "auto", memo?: string, funds?: Coin[]): Promise<ExecuteResult> =>  {
+          if (!isSigningCosmWasmClient(this.client)) { throw this.mustBeSigningClient(); }
+    return this.client.execute(sender, this.contractAddress, { set_price: args }, fee || "auto", memo, funds);
   }
   updateOwnership = async(sender:string, args: UpdateOwnershipArgs, fee?: number | StdFee | "auto", memo?: string, funds?: Coin[]): Promise<ExecuteResult> =>  {
           if (!isSigningCosmWasmClient(this.client)) { throw this.mustBeSigningClient(); }

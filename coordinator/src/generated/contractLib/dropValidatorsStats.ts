@@ -20,7 +20,7 @@ export type Decimal = string;
 export type ArrayOfValidatorState = ValidatorState[];
 
 export interface DropValidatorsStatsSchema {
-  responses: Config | QueryIds | ArrayOfValidatorState;
+  responses: Config | KvQueryIds | ArrayOfValidatorState;
   execute: RegisterStatsQueriesArgs;
   instantiate?: InstantiateMsg;
   [k: string]: unknown;
@@ -33,7 +33,7 @@ export interface Config {
   port_id: string;
   profile_update_period: number;
 }
-export interface QueryIds {
+export interface KvQueryIds {
   signing_info_id?: string | null;
   validator_profile_id?: string | null;
 }
@@ -110,8 +110,8 @@ export class Client {
   queryConfig = async(): Promise<Config> => {
     return this.client.queryContractSmart(this.contractAddress, { config: {} });
   }
-  queryQueryIds = async(): Promise<QueryIds> => {
-    return this.client.queryContractSmart(this.contractAddress, { query_ids: {} });
+  queryKVQueryIds = async(): Promise<KvQueryIds> => {
+    return this.client.queryContractSmart(this.contractAddress, { k_v_query_ids: {} });
   }
   queryState = async(): Promise<ArrayOfValidatorState> => {
     return this.client.queryContractSmart(this.contractAddress, { state: {} });
