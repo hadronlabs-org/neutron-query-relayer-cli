@@ -17,6 +17,7 @@ import pino from 'pino';
 import { FactoryContractHandler } from './factoryContract';
 import { ValidatorsStatsModule } from './modules/validators-stats';
 import { CoreModule } from './modules/core';
+import { StakerModule } from './modules/staker';
 
 export type Uint128 = string;
 
@@ -117,6 +118,12 @@ class Service {
       );
     }
 
+    if (StakerModule.verifyConfig(this.log, this.context.factoryContractHandler.skip)) {
+      this.modulesList.push(
+        new StakerModule(this.context, logger.child({ context: 'StakerModule' })),
+      );
+    }
+
     if (
       CoreModule.verifyConfig(
         this.log,
@@ -167,6 +174,9 @@ class Service {
     ) {
       for (const module of this.modulesList) {
         try {
+          this.log.info(
+            `Running ${module.constructor.name} module...`,
+          );
           await module.run();
         } catch (error) {
           this.log.error(

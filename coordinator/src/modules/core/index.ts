@@ -73,7 +73,7 @@ export class CoreModule implements ManagerModule {
       if (queryIdsArray.length > 0) {
         runQueryRelayer(this.context, this.log, queryIdsArray);
 
-        await waitBlocks(this.context, 1, this.log);
+        await waitBlocks(this.context, 3, this.log);
 
         await this.coreContractClient.tick(
           this.context.neutronWalletAddress,
