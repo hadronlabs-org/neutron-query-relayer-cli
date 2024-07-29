@@ -101,11 +101,11 @@ func startRelayer(queryIds []string) error {
 		query, err := chainClient.GetNeutronRegisteredQuery(ctx, queryId)
 		if err != nil {
 			logger.Error("could not getNeutronRegisteredQueries: %w", zap.Error(err))
-		
+		}
 
 		msg := &relay.MessageKV{QueryId: query.Id, KVKeys: query.Keys}
 		if err = kvprocessor.ProcessAndSubmit(ctx, msg); err != nil {
-			logger.Debug("unable to process and submit KV query: msg", msg)
+			logger.Debug("unable to process and submit KV query: msg", zap.Any("msg", msg))
 			logger.Error("unable to process and submit KV query: %w", zap.Error(err))
 		}
 	}
