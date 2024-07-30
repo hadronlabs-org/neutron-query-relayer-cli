@@ -2,6 +2,7 @@ package submit
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -32,7 +33,16 @@ func (si *SubmitterImpl) SubmitKVProof(
 		return fmt.Errorf("could not build proof msg: %w", err)
 	}
 
+	jsonData, err := json.Marshal(msgs)
+	if err != nil {
+		fmt.Println("Error marshaling JSON:", err)
+		return err
+	}
+
+	fmt.Println(string(jsonData))
+
 	msgs = append([]sdk.Msg{updateClientMsg}, msgs...)
+
 	_, err = si.sender.Send(ctx, msgs)
 
 	return err
