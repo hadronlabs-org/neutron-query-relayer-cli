@@ -97,6 +97,11 @@ func startRelayer(queryIds []string) error {
 		return nil
 	}
 
+	latestHeight, err := kvprocessor.TargetChain.ChainProvider.QueryLatestHeight(ctx)
+	if err != nil {
+		return fmt.Errorf("failed to get header for src chain: %w", err)
+	}
+
 	for _, queryId := range queryIds {
 		query, err := chainClient.GetNeutronRegisteredQuery(ctx, queryId)
 		if err != nil {
@@ -104,7 +109,7 @@ func startRelayer(queryIds []string) error {
 		}
 
 		msg := &relay.MessageKV{QueryId: query.Id, KVKeys: query.Keys}
-		if err = kvprocessor.ProcessAndSubmit(ctx, msg); err != nil {
+		if err = kvprocessor.ProcessAndSubmit(ctx, msg, uint64(latestHeight)); err != nil {
 			logger.Debug("unable to process and submit KV query: msg", zap.Any("msg", msg))
 			logger.Error("unable to process and submit KV query: %w", zap.Error(err))
 		}

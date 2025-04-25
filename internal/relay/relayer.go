@@ -75,5 +75,11 @@ func (r *Relayer) Run(
 // processMessageKV handles an incoming KV interchain query message and passes it to the kvProcessor for further processing.
 func (r *Relayer) processMessageKV(ctx context.Context, m *MessageKV) error {
 	r.logger.Debug("running processMessageKV for msg", zap.Uint64("query_id", m.QueryId))
-	return r.kvProcessor.ProcessAndSubmit(ctx, m)
+
+	latestHeight, err := r.targetChain.ChainProvider.QueryLatestHeight(ctx)
+	if err != nil {
+		return fmt.Errorf("failed to get header for src chain: %w", err)
+	}
+
+	return r.kvProcessor.ProcessAndSubmit(ctx, m, uint64(latestHeight))
 }

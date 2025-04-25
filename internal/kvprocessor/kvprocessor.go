@@ -26,7 +26,7 @@ type KVProcessor struct {
 	querier              *tmquerier.Querier
 	logger               *zap.Logger
 	submitter            relay.Submitter
-	targetChain          *relayer.Chain
+	TargetChain          *relayer.Chain
 	neutronChain         *relayer.Chain
 }
 
@@ -42,19 +42,14 @@ func NewKVProcessor(
 		querier:              querier,
 		logger:               logger,
 		submitter:            submitter,
-		targetChain:          targetChain,
+		TargetChain:          targetChain,
 		neutronChain:         neutronChain,
 	}
 }
 
 // ProcessAndSubmit processes relay.MessageKV. The main method which does all the work of the KVProcessor
-func (p *KVProcessor) ProcessAndSubmit(ctx context.Context, m *relay.MessageKV) error {
-	latestHeight, err := p.targetChain.ChainProvider.QueryLatestHeight(ctx)
-	if err != nil {
-		return fmt.Errorf("failed to get header for src chain: %w", err)
-	}
-
-	proofs, height, err := p.getStorageValues(ctx, uint64(latestHeight), m.KVKeys)
+func (p *KVProcessor) ProcessAndSubmit(ctx context.Context, m *relay.MessageKV, latestHeight uint64) error {
+	proofs, height, err := p.getStorageValues(ctx, latestHeight, m.KVKeys)
 	if err != nil {
 		return fmt.Errorf("failed to get storage values with proofs for query_id=%d: %w", m.QueryId, err)
 	}

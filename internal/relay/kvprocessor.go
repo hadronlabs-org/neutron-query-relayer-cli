@@ -7,5 +7,5 @@ type KVProcessor interface {
 	// ProcessAndSubmit handles an incoming KV interchain query message. It checks whether it's time
 	// to execute the query (based on the relayer's settings), queries values and proofs for the query
 	// keys, and submits the result to the Neutron chain.
-	ProcessAndSubmit(ctx context.Context, m *MessageKV) error
+	ProcessAndSubmit(ctx context.Context, m *MessageKV, latestHeight uint64) error
 }
